@@ -36,8 +36,8 @@ export type UserRole = "user" | "teacher" | "mentor" | "parent";
 export const ROLE_META: Record<UserRole, { label: string; basePath: string; color: string }> = {
   user: { label: "Guru Mata Pelajaran", basePath: "/admin", color: "text-blue-500" },
   teacher: { label: "Guru Mata Pelajaran", basePath: "/teacher", color: "text-blue-500" },
-  mentor:  { label: "Wali Kelas",          basePath: "/mentor",  color: "text-emerald-500" },
-  parent:  { label: "Wali Murid",          basePath: "/parent",  color: "text-orange-500" },
+  mentor:  { label: "Teacher",          basePath: "/mentor",  color: "text-emerald-500" },
+  parent:  { label: "Parent Student",          basePath: "/parent",  color: "text-orange-500" },
 };
 
 
