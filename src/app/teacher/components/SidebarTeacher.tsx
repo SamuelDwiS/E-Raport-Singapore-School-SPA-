@@ -32,6 +32,12 @@ const navItems: NavItem[] = [
     name: "Dashboard",
     path: "/",
   },
+   {
+      name: "Subjects",
+      icon: <PageIcon/>,
+      path: "/subject",
+      subItems: [{ name: "Input Grade", path: "/subject", pro: false }],
+    },
   {
     icon: <ListIcon />,
     name: "Report",
@@ -70,7 +76,7 @@ const othersItems: NavItem[] = [
   },
 ];
 
-const SidebarParent: React.FC = () => {
+const SidebarTeacher: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
 
@@ -341,4 +347,4 @@ const SidebarParent: React.FC = () => {
   );
 };
 
-export default SidebarParent;
+export default SidebarTeacher;

@@ -121,14 +121,16 @@ export default function StatisticGrade() {
       },
     },
     yaxis: {
+      min: 0,
+      max: 100,
       labels: {
         style: {
-          fontSize: "12px", // Adjust font size for y-axis labels
-          colors: ["#6B7280"], // Color of the labels
+          fontSize: "12px",
+          colors: ["#6B7280"],
         },
       },
       title: {
-        text: "", // Remove y-axis title
+        text: "",
         style: {
           fontSize: "0px",
         },
@@ -138,12 +140,12 @@ export default function StatisticGrade() {
 
   const series = [
     {
-      name: "Sales",
-      data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
+      name: "Nilai Ujian",
+      data: [78, 80, 75, 82, 85, 80, 88, 90, 87, 92, 89, 95],
     },
     {
-      name: "Revenue",
-      data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
+      name: "Nilai Tugas",
+      data: [70, 72, 68, 75, 78, 74, 80, 83, 81, 85, 84, 88],
     },
   ];
   return (
@@ -151,10 +153,10 @@ export default function StatisticGrade() {
       <div className="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between">
         <div className="w-full">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Grafik
+            Grafik Perkembangan Nilai
           </h3>
           <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-            Target you've set for each month
+            Tren nilai ujian dan tugas per bulan
           </p>
         </div>
         <div className="flex items-center gap-3 sm:justify-end">

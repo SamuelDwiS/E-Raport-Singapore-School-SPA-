@@ -7,7 +7,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 const outfit = Outfit({
   subsets: ["latin"],
 });
-
+  
 export default function RootLayout({
   children,
 }: Readonly<{
