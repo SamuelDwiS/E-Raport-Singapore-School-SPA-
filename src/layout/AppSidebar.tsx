@@ -18,11 +18,13 @@ interface AppSidebarProps {
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
+
+  
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
 
   const sections: NavSection[] = NAV_CONFIG[role];
-  const roleMeta = ROLE_META[role];
+  const roleMeta = ROLE_META[role] || ROLE_META["user"]; // Fallback to 'user' role meta if not found
 
   const [openSubmenu, setOpenSubmenu] = useState<{
     sectionIdx: number;
@@ -245,8 +247,22 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
                 </ul>
               </div>
             ))}
+
+
           </div>
         </nav>
+         {useSidebar && (
+        <div className="px-4 py-6 mt-auto">
+          <div className="rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-4 text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              E-Raport SPA
+            </p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+              Copyright© Relig 2026
+            </p>
+          </div>
+        </div>
+      )}
       </div>
     </aside>
   );

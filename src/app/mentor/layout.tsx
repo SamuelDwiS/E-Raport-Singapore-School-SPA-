@@ -2,7 +2,7 @@
 
 import { useSidebar } from "@/context/SidebarContext";
 import AppHeader from "@/layout/AppHeader";
-import SidebarMentor from "./components/SidebarMentor";
+import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import React from "react";
 
@@ -23,7 +23,7 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen xl:flex">
       {/* Sidebar and Backdrop */}
-      <SidebarMentor />
+      <AppSidebar role="mentor" />
       <Backdrop />
       {/* Main Content Area */}
       <div
