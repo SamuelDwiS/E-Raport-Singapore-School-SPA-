@@ -189,25 +189,25 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
             <>
               <Image
                 className="dark:hidden"
-                src="/images/logo/logo_E-Raport.png"
+                src="/images/logo/logo_new.svg"
                 alt="Logo"
-                width={100}
-                height={100}
+                width={150}
+                height={150}
               />
               <Image
                 className="hidden dark:block"
-                src="/images/logo/logo_E-Raport.png"
+                src="/images/logo/logo_dark.svg"
                 alt="Logo"
-                width={100}
-                height={100}
+                width={150}
+                height={150}
               />
             </>
           ) : (
             <Image
-              src="/images/logo/logo_E-Raport.png"
+              src="/images/logo/icon.svg"
               alt="Logo"
-              width={32}
-              height={32}
+              width={50}
+              height={50}
             />
           )}
         </Link>
