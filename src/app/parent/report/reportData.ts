@@ -2,10 +2,15 @@
 export type Level = "Exceeding" | "Meeting" | "Improving" | "—";
 
 export type SubjectReport = {
+  kode: string;
   name: string;
   teacher: string;
+  sks: number;
+  jenisKelas: string;
   criteria: { description: string; score: string }[];
   average: string;
+  indeks: string;
+  nilaiAngka: string;
   level: Level;
 };
 
@@ -15,6 +20,7 @@ export type TermReport = {
   status: "Aktif" | "Selesai";
   class: string;
   studentName: string;
+  domain: string;
   subjects: SubjectReport[];
   teacherNote: string;
   mentor: string;
@@ -98,311 +104,188 @@ export function getOverallAvg(subjects: SubjectReport[]): string {
 // ─── Mock Data ─────────────────────────────────────────────────────────────────
 export const REPORTS: TermReport[] = [
   {
-    term: "Term 1",
-    academicYear: "2025/2026",
-    status: "Aktif",
-    class: "Year 5",
-    studentName: "Adrian Li Preman",
-    mentor: "Pak Hartono",
-    teacherNote:
-      "Ananda menunjukkan semangat belajar yang baik di Term 1. Aktif dalam diskusi kelas dan mengerjakan tugas dengan tepat waktu.",
-    subjects: [
-      {
-        name: "Physical Education",
-        teacher: "Mr Dhudy Cahyanto",
-        criteria: [
-          { description: "Displays good spatial awareness while performing activities", score: "2.80" },
-          { description: "Shows developmentally appropriate motor/physical fitness", score: "2.60" },
-          { description: "Demonstrates a good level of skill in most PE activities", score: "2.70" },
-        ],
-        average: "2.70",
-        level: "Exceeding",
-      },
-      {
-        name: "Performing Arts (Music)",
-        teacher: "Mr Ari Irawan",
-        criteria: [
-          { description: "Displays good knowledge & appreciation of performing art", score: "2.40" },
-          { description: "Demonstrates developmentally appropriate skills", score: "2.20" },
-          { description: "Shows creativity in performance", score: "2.30" },
-        ],
-        average: "2.30",
-        level: "Meeting",
-      },
-      {
-        name: "Art & Craft",
-        teacher: "Ms Paulina",
-        criteria: [
-          { description: "Demonstrates appropriate application of skills", score: "2.60" },
-          { description: "Shows creativity and good quality of work done", score: "2.80" },
-          { description: "Shows keen interest in art projects", score: "2.70" },
-        ],
-        average: "2.70",
-        level: "Exceeding",
-      },
-      {
-        name: "Information & Communication Technology",
-        teacher: "Mr Rado Aditya",
-        criteria: [
-          { description: "Possesses good grasp of ICT knowledge", score: "2.50" },
-          { description: "Demonstrates good application of ICT skills", score: "2.40" },
-        ],
-        average: "2.45",
-        level: "Meeting",
-      },
-      {
-        name: "English Language",
-        teacher: "Ms Sarah Tan",
-        criteria: [
-          { description: "Reads with good comprehension and fluency", score: "2.70" },
-          { description: "Writes clearly and with good structure", score: "2.50" },
-          { description: "Communicates orally with confidence", score: "2.60" },
-        ],
-        average: "2.60",
-        level: "Exceeding",
-      },
-      {
-        name: "Mathematics",
-        teacher: "Mr Kevin Lim",
-        criteria: [
-          { description: "Demonstrates strong number sense", score: "2.30" },
-          { description: "Applies problem solving strategies effectively", score: "2.20" },
-          { description: "Interprets and analyses data accurately", score: "2.40" },
-        ],
-        average: "2.30",
-        level: "Meeting",
-      },
-    ],
-  },
-  {
-    term: "Term 2",
-    academicYear: "2025/2026",
-    status: "Selesai",
-    class: "Year 5",
-    studentName: "Adrian Li Preman",
-    mentor: "Pak Hartono",
-    teacherNote:
-      "Perkembangan yang sangat baik di Term 2. Ananda mulai menunjukkan kepercayaan diri lebih dalam presentasi.",
-    subjects: [
-      {
-        name: "Physical Education",
-        teacher: "Mr Dhudy Cahyanto",
-        criteria: [
-          { description: "Displays good spatial awareness while performing activities", score: "2.60" },
-          { description: "Shows developmentally appropriate motor/physical fitness", score: "2.50" },
-          { description: "Demonstrates a good level of skill in most PE activities", score: "2.40" },
-        ],
-        average: "2.50",
-        level: "Exceeding",
-      },
-      {
-        name: "Performing Arts (Music)",
-        teacher: "Mr Ari Irawan",
-        criteria: [
-          { description: "Displays good knowledge & appreciation of performing art", score: "2.20" },
-          { description: "Demonstrates developmentally appropriate skills", score: "2.00" },
-          { description: "Shows creativity in performance", score: "2.10" },
-        ],
-        average: "2.10",
-        level: "Meeting",
-      },
-      {
-        name: "Art & Craft",
-        teacher: "Ms Paulina",
-        criteria: [
-          { description: "Demonstrates appropriate application of skills", score: "2.40" },
-          { description: "Shows creativity and good quality of work done", score: "2.50" },
-          { description: "Shows keen interest in art projects", score: "2.30" },
-        ],
-        average: "2.40",
-        level: "Meeting",
-      },
-      {
-        name: "Information & Communication Technology",
-        teacher: "Mr Rado Aditya",
-        criteria: [
-          { description: "Possesses good grasp of ICT knowledge", score: "2.30" },
-          { description: "Demonstrates good application of ICT skills", score: "2.20" },
-        ],
-        average: "2.25",
-        level: "Meeting",
-      },
-      {
-        name: "English Language",
-        teacher: "Ms Sarah Tan",
-        criteria: [
-          { description: "Reads with good comprehension and fluency", score: "2.50" },
-          { description: "Writes clearly and with good structure", score: "2.40" },
-          { description: "Communicates orally with confidence", score: "2.50" },
-        ],
-        average: "2.47",
-        level: "Meeting",
-      },
-      {
-        name: "Mathematics",
-        teacher: "Mr Kevin Lim",
-        criteria: [
-          { description: "Demonstrates strong number sense", score: "2.10" },
-          { description: "Applies problem solving strategies effectively", score: "2.00" },
-          { description: "Interprets and analyses data accurately", score: "2.20" },
-        ],
-        average: "2.10",
-        level: "Meeting",
-      },
-    ],
-  },
-  {
-    term: "Term 3",
-    academicYear: "2024/2025",
-    status: "Selesai",
-    class: "Year 4",
-    studentName: "Adrian Li Preman",
-    mentor: "Bu Sari",
-    teacherNote:
-      "Ananda menunjukkan progres yang stabil. Perlu lebih banyak latihan pada mata pelajaran seni.",
-    subjects: [
-      {
-        name: "Physical Education",
-        teacher: "Mr Dhudy Cahyanto",
-        criteria: [
-          { description: "Displays good spatial awareness while performing activities", score: "2.40" },
-          { description: "Shows developmentally appropriate motor/physical fitness", score: "2.20" },
-          { description: "Demonstrates a good level of skill in most PE activities", score: "2.30" },
-        ],
-        average: "2.30",
-        level: "Meeting",
-      },
-      {
-        name: "Performing Arts (Music)",
-        teacher: "Mr Ari Irawan",
-        criteria: [
-          { description: "Displays good knowledge & appreciation of performing art", score: "1.80" },
-          { description: "Demonstrates developmentally appropriate skills", score: "1.90" },
-          { description: "Shows creativity in performance", score: "2.00" },
-        ],
-        average: "1.90",
-        level: "Improving",
-      },
-      {
-        name: "Art & Craft",
-        teacher: "Ms Paulina",
-        criteria: [
-          { description: "Demonstrates appropriate application of skills", score: "2.10" },
-          { description: "Shows creativity and good quality of work done", score: "2.20" },
-          { description: "Shows keen interest in art projects", score: "2.00" },
-        ],
-        average: "2.10",
-        level: "Meeting",
-      },
-      {
-        name: "Information & Communication Technology",
-        teacher: "Mr Rado Aditya",
-        criteria: [
-          { description: "Possesses good grasp of ICT knowledge", score: "2.20" },
-          { description: "Demonstrates good application of ICT skills", score: "2.10" },
-        ],
-        average: "2.15",
-        level: "Meeting",
-      },
-      {
-        name: "English Language",
-        teacher: "Ms Sarah Tan",
-        criteria: [
-          { description: "Reads with good comprehension and fluency", score: "2.30" },
-          { description: "Writes clearly and with good structure", score: "2.20" },
-          { description: "Communicates orally with confidence", score: "2.40" },
-        ],
-        average: "2.30",
-        level: "Meeting",
-      },
-      {
-        name: "Mathematics",
-        teacher: "Mr Kevin Lim",
-        criteria: [
-          { description: "Demonstrates strong number sense", score: "1.90" },
-          { description: "Applies problem solving strategies effectively", score: "1.80" },
-          { description: "Interprets and analyses data accurately", score: "2.00" },
-        ],
-        average: "1.90",
-        level: "Improving",
-      },
-    ],
-  },
-  {
     term: "Term 4",
     academicYear: "2024/2025",
     status: "Selesai",
-    class: "Year 4",
-    studentName: "Adrian Li Preman",
-    mentor: "Bu Sari",
-    teacherNote:
-      "Penutup tahun yang memuaskan. Ananda berhasil meningkatkan nilai hampir di semua mata pelajaran.",
+    class: "Year 1",
+    studentName: "Emmy Kurniawan Lukminto",
+    domain: "AESTHETICS DOMAIN",
+    mentor: "Pak Hartono",
+    teacherNote: "Ananda menunjukkan progres yang sangat baik di akhir tahun ajaran.",
     subjects: [
       {
-        name: "Physical Education",
+        kode: "PE-101",
+        name: "PHYSICAL EDUCATION",
         teacher: "Mr Dhudy Cahyanto",
+        domain: "AESTHETICS DOMAIN",
+        sks: 2,
+        jenisKelas: "Reguler",
+        indeks: "A",
+        nilaiAngka: "4.0",
         criteria: [
-          { description: "Displays good spatial awareness while performing activities", score: "2.20" },
-          { description: "Shows developmentally appropriate motor/physical fitness", score: "2.10" },
-          { description: "Demonstrates a good level of skill in most PE activities", score: "2.00" },
+          { description: "Displays good spatial awareness while performing activities", score: "3.00" },
+          { description: "Shows developmentally appropriate motor/physical fitness", score: "3.00" },
+          { description: "Demonstrates a good level of skill in most PE activities", score: "3.00" },
         ],
-        average: "2.10",
-        level: "Meeting",
+        average: "3.00",
+        level: "Exceeding",
       },
       {
-        name: "Performing Arts (Music)",
+        kode: "PA-102",
+        name: "PERFORMING ARTS (Music)",
         teacher: "Mr Ari Irawan",
+        domain: "AESTHETICS DOMAIN",
+        sks: 3,
+        jenisKelas: "Reguler",
+        indeks: "A",
+        nilaiAngka: "4.0",
         criteria: [
-          { description: "Displays good knowledge & appreciation of performing art", score: "1.70" },
-          { description: "Demonstrates developmentally appropriate skills", score: "1.60" },
-          { description: "Shows creativity in performance", score: "1.80" },
+          { description: "Displays good knowledge & appreciation of performing art", score: "3.00" },
+          { description: "Demonstrates developmentally appropriate skills", score: "3.00" },
+          { description: "Shows creativity in performance", score: "3.00" },
         ],
-        average: "1.70",
-        level: "Improving",
+        average: "3.00",
+        level: "Exceeding",
       },
       {
-        name: "Art & Craft",
-        teacher: "Ms Paulina",
+        kode: "AC-103",
+        name: "ART & CRAFT",
+        teacher: "Ms Katrin",
+        domain: "AESTHETICS DOMAIN",
+        sks: 2,
+        jenisKelas: "Reguler",
+        indeks: "A",
+        nilaiAngka: "4.0",
         criteria: [
-          { description: "Demonstrates appropriate application of skills", score: "2.00" },
-          { description: "Shows creativity and good quality of work done", score: "2.10" },
-          { description: "Shows keen interest in art projects", score: "1.90" },
+          { description: "Demonstrates appropriate application of skills", score: "3.00" },
+          { description: "Shows creativity and good quality of work done", score: "3.00" },
+          { description: "Shows keen interest in art projects", score: "3.00" },
         ],
-        average: "2.00",
-        level: "Meeting",
+        average: "3.00",
+        level: "Exceeding",
       },
       {
-        name: "Information & Communication Technology",
+        kode: "ICT-104",
+        name: "INFORMATION & COMMUNICATION TECHNOLOGY",
         teacher: "Mr Rado Aditya",
+        domain: "AESTHETICS DOMAIN",
+        sks: 3,
+        jenisKelas: "Reguler",
+        indeks: "A",
+        nilaiAngka: "4.0",
         criteria: [
-          { description: "Possesses good grasp of ICT knowledge", score: "2.00" },
-          { description: "Demonstrates good application of ICT skills", score: "1.90" },
+          { description: "Possesses good grasp of ICT knowledge", score: "3.00" },
+          { description: "Demonstrates good application of ICT skills", score: "3.00" },
         ],
-        average: "1.95",
-        level: "Improving",
+        average: "3.00",
+        level: "Exceeding",
       },
       {
-        name: "English Language",
-        teacher: "Ms Sarah Tan",
+        kode: "SCI-105",
+        name: "SCIENCE",
+        teacher: "Ms Sarah",
+        domain: "SCIENCE DOMAIN",
+        sks: 3,
+        jenisKelas: "Reguler",
+        indeks: "A",
+        nilaiAngka: "4.0",
         criteria: [
-          { description: "Reads with good comprehension and fluency", score: "2.10" },
-          { description: "Writes clearly and with good structure", score: "2.00" },
-          { description: "Communicates orally with confidence", score: "2.20" },
+          { description: "Understanding basic science concepts", score: "3.00" },
+          { description: "Conducting simple experiments", score: "3.00" },
         ],
-        average: "2.10",
-        level: "Meeting",
+        average: "3.00",
+        level: "Exceeding",
       },
       {
-        name: "Mathematics",
-        teacher: "Mr Kevin Lim",
+        kode: "BI-106",
+        name: "BAHASA INDONESIA",
+        teacher: "Bu Sari",
+        domain: "LANGUAGE DOMAIN",
+        sks: 3,
+        jenisKelas: "Reguler",
+        indeks: "A",
+        nilaiAngka: "4.0",
         criteria: [
-          { description: "Demonstrates strong number sense", score: "1.80" },
-          { description: "Applies problem solving strategies effectively", score: "1.70" },
-          { description: "Interprets and analyses data accurately", score: "1.90" },
+          { description: "Membaca dengan pemahaman baik", score: "3.00" },
+          { description: "Menulis narasi sederhana", score: "3.00" },
         ],
-        average: "1.80",
-        level: "Improving",
+        average: "3.00",
+        level: "Exceeding",
+      },
+      {
+        kode: "ENG-107",
+        name: "ENGLISH",
+        teacher: "Ms Jennifer",
+        domain: "LANGUAGE DOMAIN",
+        sks: 3,
+        jenisKelas: "Reguler",
+        indeks: "A",
+        nilaiAngka: "4.0",
+        criteria: [
+          { description: "Reading and listening skills", score: "3.00" },
+          { description: "Speaking and writing skills", score: "3.00" },
+        ],
+        average: "3.00",
+        level: "Exceeding",
+      },
+      {
+        kode: "MATH-108",
+        name: "MATHEMATICS",
+        teacher: "Mr Kevin",
+        domain: "MATHEMATICS DOMAIN",
+        sks: 3,
+        jenisKelas: "Reguler",
+        indeks: "A",
+        nilaiAngka: "4.0",
+        criteria: [
+          { description: "Number sense and operations", score: "3.00" },
+          { description: "Geometry and measurement", score: "3.00" },
+        ],
+        average: "3.00",
+        level: "Exceeding",
       },
     ],
   },
-];
+  {
+    term: "Term 1",
+    academicYear: "2025/2026",
+    status: "Aktif",
+    class: "Year 2",
+    studentName: "Emmy Kurniawan Lukminto",
+    domain: "AESTHETICS DOMAIN",
+    mentor: "Pak Hartono",
+    teacherNote: "Semangat belajar yang tinggi di awal kelas baru.",
+    subjects: [
+      {
+        kode: "SCI-201",
+        name: "SCIENCE",
+        teacher: "Ms Sarah",
+        sks: 3,
+        jenisKelas: "Reguler",
+        indeks: "A-",
+        nilaiAngka: "3.7",
+        criteria: [
+          { description: "Understanding basic science concepts", score: "2.80" },
+          { description: "Conducting simple experiments", score: "2.70" },
+        ],
+        average: "2.75",
+        level: "Exceeding",
+      },
+      {
+        kode: "BI-202",
+        name: "BAHASA INDONESIA",
+        teacher: "Bu Sari",
+        sks: 3,
+        jenisKelas: "Reguler",
+        indeks: "A",
+        nilaiAngka: "4.0",
+        criteria: [
+          { description: "Membaca dengan pemahaman baik", score: "2.90" },
+          { description: "Menulis narasi sederhana", score: "2.85" },
+        ],
+        average: "2.88",
+        level: "Exceeding",
+      },
+    ],
+  },
+];

@@ -1,5 +1,6 @@
   "use client"
 import React from 'react'
+import Link from 'next/link'
 import StatisticGrade from './components/StatisticGrade'
 
 const ParentDashboard = () => {
@@ -56,7 +57,7 @@ const ParentDashboard = () => {
           </div>
         </div>
 
-        {/* Kolom kanan: Catatan Wali Kelas
+        {/* Kolom kanan: Catatan Wali Kelas */}
         <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200 dark:border-gray-800 p-5 shadow-sm h-fit">
           <h3 className="font-semibold text-gray-800 dark:text-white/90 mb-3">Catatan Wali Kelas</h3>
           <div className="flex items-center gap-2 mb-3">
@@ -66,13 +67,24 @@ const ParentDashboard = () => {
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Pak Hartono</span>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-            Ananda putri dari Pak Hartono menunjukkan kemajuan akademik yang baik.
-            Menunjukkan kebiasaan belajar yang konsisten dan disiplin di kelas.
+            Ananda menunjukkan kemajuan akademik yang baik di Term ini.
+            Semangat belajarnya sangat konsisten.
           </p>
-          <button className="text-sm text-blue-600 dark:text-blue-400 font-medium hover:underline">
-            Lihat Raport Lengkap →
-          </button>
-        </div> */}
+          <div className="flex flex-col gap-2">
+            <Link 
+              href={`/parent/report/2025-2026-term-1`}
+              className="text-sm text-indigo-600 dark:text-indigo-400 font-bold hover:underline flex items-center gap-1"
+            >
+              Lihat Raport Lengkap →
+            </Link>
+            <Link 
+              href={`/parent/report/2025-2026-term-1?view=table`}
+              className="text-sm text-indigo-600 dark:text-indigo-400 font-bold hover:underline flex items-center gap-1"
+            >
+              Detail Nilai (Tabel) →
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Baris 2: Grafik Statistik Nilai – full width */}

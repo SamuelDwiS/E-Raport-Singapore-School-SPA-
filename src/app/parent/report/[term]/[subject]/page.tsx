@@ -4,344 +4,261 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
   REPORTS,
-  getLevelStyle,
   termToSlug,
-  subjectToSlug,
+  slugToSubject,
 } from "../../reportData";
 
-// ─── Score Bar ─────────────────────────────────────────────────────────────────
-function ScoreBar({ score, max = 3 }: { score: string; max?: number }) {
+// ─── Score Badge (Modern View) ──────────────────────────────────────────────
+function ScoreBadge({ score }: { score: string }) {
   const val = parseFloat(score);
-  const pct = isNaN(val) ? 0 : (val / max) * 100;
-  const color =
-    val >= 2.5 ? "bg-emerald-500" : val >= 2.0 ? "bg-blue-500" : "bg-amber-500";
+  const color = val >= 2.5 ? "bg-emerald-500" : val >= 2.0 ? "bg-blue-500" : "bg-amber-500";
   return (
-    <div className="flex items-center gap-3 w-full">
-      <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-3">
-        <div
-          className={`${color} h-3 rounded-full transition-all duration-700`}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <span className="text-sm font-black text-gray-700 dark:text-gray-300 w-10 text-right shrink-0">
-        {score}
+    <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-xl border border-white/10 shadow-inner">
+      <div className={`w-2 h-2 rounded-full ${color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`} />
+      <span className="text-sm font-black text-white tabular-nums">
+        {val.toFixed(2).replace(".", ",")}
       </span>
     </div>
   );
 }
 
-// ─── Radial Score ──────────────────────────────────────────────────────────────
-function RadialScore({ score, label }: { score: string; label: string }) {
-  const val = parseFloat(score);
-  const pct = isNaN(val) ? 0 : (val / 3) * 100;
-  const radius = 40;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (pct / 100) * circumference;
-  const color = val >= 2.5 ? "#10b981" : val >= 2.0 ? "#3b82f6" : "#f59e0b";
-
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative">
-        <svg width="100" height="100" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r={radius} fill="none" stroke="#e5e7eb" strokeWidth="10" className="dark:stroke-gray-700" />
-          <circle
-            cx="50"
-            cy="50"
-            r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth="10"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            transform="rotate(-90 50 50)"
-            style={{ transition: "stroke-dashoffset 1s ease" }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-lg font-black text-gray-800 dark:text-white">{score}</span>
-          <span className="text-[9px] text-gray-400 font-medium">/3.00</span>
-        </div>
-      </div>
-      <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 text-center max-w-[100px] leading-tight">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-// ─── Main Page ─────────────────────────────────────────────────────────────────
+// ─── Detail Penilaian Page ──────────────────────────────────────────────────
 export default function SubjectDetailPage() {
   const params = useParams();
   const termSlug = params.term as string;
   const subjectSlug = params.subject as string;
 
   const report = REPORTS.find((r) => termToSlug(r) === termSlug);
-  const subject = report?.subjects.find((s) => subjectToSlug(s.name) === subjectSlug);
+  const currentSubjectName = slugToSubject(subjectSlug);
+  const currentSubject = report?.subjects.find(
+    (s) => s.name.toLowerCase() === currentSubjectName.toLowerCase()
+  );
 
-  if (!report || !subject) {
+  if (!report || !currentSubject) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <div className="text-5xl">📭</div>
-        <p className="text-gray-500 dark:text-gray-400 font-semibold">Data mata pelajaran tidak ditemukan.</p>
+        <div className="text-5xl">⚠️</div>
+        <p className="text-gray-500 dark:text-gray-400 font-semibold">
+          Data penilaian tidak ditemukan.
+        </p>
         <Link
-          href="/parent/report"
+          href={`/parent/report/${termSlug}`}
           className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
         >
-          ← Kembali ke Daftar Raport
+          ← Kembali ke Daftar Nilai
         </Link>
       </div>
     );
   }
 
-  const style = getLevelStyle(subject.level);
+  // Get all subjects in the same domain
+  const domainSubjects = report.subjects.filter(
+    (s) => s.domain === currentSubject.domain
+  );
 
-  // Find same subject in other terms for trend
-  const trend = REPORTS.map((r) => ({
-    term: `${r.academicYear} ${r.term}`,
-    shortTerm: r.term,
-    year: r.academicYear,
-    avg: r.subjects.find((s) => s.name === subject.name)?.average ?? null,
-    level: r.subjects.find((s) => s.name === subject.name)?.level ?? "—",
-  })).filter((t) => t.avg !== null);
-
-  // Sibling subjects for navigation
-  const subjectIdx = report.subjects.findIndex((s) => s.name === subject.name);
-  const prevSubject = report.subjects[subjectIdx - 1];
-  const nextSubject = report.subjects[subjectIdx + 1];
+  // Calculate domain average
+  const domainAvg = (
+    domainSubjects.reduce((sum, s) => sum + parseFloat(s.average), 0) /
+    domainSubjects.length
+  ).toFixed(2);
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 flex-wrap">
-        <Link href="/parent/report" className="hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors">
-          Laporan Nilai
-        </Link>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-        <Link href={`/parent/report/${termSlug}`} className="hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors">
-          {report.academicYear} — {report.term}
-        </Link>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-        <span className="text-gray-600 dark:text-gray-300 font-semibold">{subject.name}</span>
-      </nav>
-
-      {/* Hero Header */}
-      <div
-        className={`rounded-3xl p-7 text-white shadow-xl ${
-          subject.level === "Exceeding"
-            ? "bg-gradient-to-br from-emerald-700 to-emerald-900"
-            : subject.level === "Meeting"
-            ? "bg-gradient-to-br from-blue-700 to-blue-900"
-            : "bg-gradient-to-br from-amber-600 to-amber-800"
-        }`}
-      >
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
-          <div className="flex-1">
-            <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
-              {report.academicYear} • {report.class} • {report.term}
+    <div className="space-y-6 p-4 md:p-6 max-w-5xl mx-auto">
+      {/* ── MODERN UI VERSION (Screen Only) ───────────────────────────── */}
+      <div className="space-y-6 print:hidden">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 bg-white dark:bg-white/[0.03] p-6 rounded-3xl border border-gray-200 dark:border-white/10 shadow-xl backdrop-blur-md">
+          <div className="space-y-1 text-center sm:text-left">
+            <nav className="flex items-center justify-center sm:justify-start gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+              <Link href={`/parent/report/${termSlug}`} className="hover:text-indigo-400 transition-colors">Laporan Nilai</Link>
+              <span>/</span>
+              <span className="text-indigo-500">Detail Penilaian</span>
+            </nav>
+            <h1 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-3 justify-center sm:justify-start">
+              <span className="bg-indigo-500 w-2 h-8 rounded-full" />
+              {currentSubject.domain}
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 text-xs font-medium">
+              Laporan Penilaian Sub-materi Siswa — {report.term} {report.academicYear}
             </p>
-            <h1 className="text-2xl sm:text-3xl font-black leading-tight">{subject.name}</h1>
-            <p className="text-white/70 text-sm mt-2">Guru Pengampu: {subject.teacher}</p>
-            <div className="flex items-center gap-3 mt-4">
-              <span className={`text-xs font-bold px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm`}>
-                {subject.level} Expectations
-              </span>
-              <span className="text-white/70 text-sm">{subject.criteria.length} Kriteria Penilaian</span>
+          </div>
+
+          <button
+            onClick={() => window.print()}
+            className="group flex items-center gap-3 bg-gradient-to-br from-indigo-600 to-violet-700 hover:from-indigo-500 hover:to-violet-600 text-white px-8 py-3.5 rounded-2xl font-black text-xs transition-all shadow-[0_10px_20px_-10px_rgba(79,70,229,0.5)] active:scale-95"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="group-hover:rotate-12 transition-transform">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg>
+            Cetak Print Report
+          </button>
+        </div>
+
+        {/* Student Summary Card */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white dark:bg-white/[0.03] p-5 rounded-2xl border border-gray-200 dark:border-white/5 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Student</p>
+              <p className="text-sm font-bold text-gray-800 dark:text-white">{report.studentName}</p>
             </div>
           </div>
-          <div className="flex flex-col items-center gap-1 bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4">
-            <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest">Rata-rata</p>
-            <p className="text-5xl font-black">{subject.average}</p>
-            <p className="text-white/50 text-xs">/3.00</p>
+          <div className="bg-white dark:bg-white/[0.03] p-5 rounded-2xl border border-gray-200 dark:border-white/5 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-500">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Class / Year</p>
+              <p className="text-sm font-bold text-gray-800 dark:text-white">{report.class}</p>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-white/[0.03] p-5 rounded-2xl border border-gray-200 dark:border-white/5 flex items-center gap-4 shadow-[inset_0_0_20px_rgba(79,70,229,0.05)]">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div>
+              <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Average Score</p>
+              <p className="text-sm font-black text-emerald-500">{domainAvg.replace(".", ",")}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Subjects List (Modern Cards) */}
+        <div className="space-y-6">
+          {domainSubjects.map((subj) => (
+            <div key={subj.name} className="bg-white dark:bg-white/[0.02] rounded-3xl border border-gray-200 dark:border-white/5 overflow-hidden shadow-sm">
+              <div className="px-6 py-4 bg-gray-50 dark:bg-white/5 border-b border-gray-200 dark:border-white/5 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                   <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                   <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-wide">{subj.name}</h3>
+                </div>
+                <span className="text-[10px] font-bold text-gray-400 uppercase italic">Teacher: {subj.teacher}</span>
+              </div>
+              <div className="p-6">
+                <div className="space-y-4">
+                  {subj.criteria.map((c, idx) => (
+                    <div key={idx} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-white/10 group">
+                      <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl font-medium">
+                        {c.description}
+                      </p>
+                      <ScoreBadge score={c.score} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer Summary (Modern) */}
+        <div className="bg-gradient-to-r from-indigo-600 to-violet-700 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl" />
+          <div className="relative flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="space-y-2 text-center md:text-left">
+              <p className="text-xs font-black uppercase tracking-widest text-indigo-200">Domain Performance</p>
+              <h4 className="text-3xl font-black">{domainAvg.replace(".", ",")} Rata-rata</h4>
+              <p className="text-sm text-indigo-100 italic font-medium opacity-80">"Terus tingkatkan semangat belajar dan eksplorasi di bidang {currentSubject.domain}."</p>
+            </div>
+            <div className="flex gap-4">
+               <div className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/20 text-center">
+                 <p className="text-[10px] uppercase font-black tracking-widest text-indigo-200 mb-1">Status</p>
+                 <p className="text-sm font-bold">Terlampaui</p>
+               </div>
+               <div className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/20 text-center">
+                 <p className="text-[10px] uppercase font-black tracking-widest text-indigo-200 mb-1">Total Mapel</p>
+                 <p className="text-sm font-bold">{domainSubjects.length}</p>
+               </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Criteria Cards + Radial Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Criteria Breakdown */}
-        <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
-            <h2 className="text-base font-bold text-gray-800 dark:text-white/90">Rincian Kriteria</h2>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Nilai tiap kriteria penilaian</p>
+      {/* ── EXCEL STYLE VIEW (Print Only) ─────────────────────────────── */}
+      <div className="hidden print:block bg-white text-black p-0 m-0 font-sans">
+        <div className="p-8 space-y-8">
+          {/* Header Print */}
+          <div className="text-center border-b-2 border-black pb-4 mb-6">
+            <h1 className="text-2xl font-black uppercase tracking-widest">
+              {report.term} REPORT {report.academicYear}
+            </h1>
           </div>
-          <div className="p-6 space-y-5">
-            {subject.criteria.map((c, i) => {
-              const val = parseFloat(c.score);
-              const critStyle = getLevelStyle(
-                val >= 2.5 ? "Exceeding" : val >= 2.0 ? "Meeting" : "Improving"
-              );
-              return (
-                <div key={i} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 text-[10px] font-black flex items-center justify-center">
-                        {i + 1}
-                      </span>
-                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        {c.description}
-                      </span>
-                    </div>
-                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${critStyle.badge}`}>
-                      {val >= 2.5 ? "Exceeding" : val >= 2.0 ? "Meeting" : "Improving"}
-                    </span>
-                  </div>
-                  <ScoreBar score={c.score} />
-                </div>
-              );
-            })}
 
-            {/* Divider + Overall */}
-            <div className="pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Rata-rata Keseluruhan</span>
-                <span className={`text-lg font-black ${style.text}`}>{subject.average}</span>
+          {/* Student Info Print */}
+          <div className="flex justify-between items-start border-b border-black pb-2">
+            <div className="space-y-1">
+              <p className="text-xs font-black uppercase tracking-wide italic">{currentSubject.domain}</p>
+              <div className="flex items-center gap-2 text-xs italic">
+                <span>Name of Student:</span>
+                <span className="font-bold border-b border-black min-w-[200px]">{report.studentName}</span>
               </div>
-              <ScoreBar score={subject.average} />
+            </div>
+            <div className="text-right">
+              <p className="text-xs font-black uppercase">{report.class}</p>
             </div>
           </div>
-        </div>
 
-        {/* Radial Visual */}
-        <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
-            <h2 className="text-base font-bold text-gray-800 dark:text-white/90">Visualisasi Nilai</h2>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Perbandingan nilai per kriteria</p>
-          </div>
-          <div className="p-6 flex flex-wrap gap-4 justify-center">
-            {subject.criteria.map((c, i) => (
-              <RadialScore key={i} score={c.score} label={c.description} />
+          {/* Subject List Print */}
+          <div className="space-y-6">
+            <div className="flex justify-end pr-4">
+              <span className="text-[10px] font-black uppercase tracking-widest">Level</span>
+            </div>
+
+            {domainSubjects.map((subj) => (
+              <div key={subj.name} className="space-y-1">
+                <h3 className="text-xs font-black italic uppercase border-b border-gray-300 pb-1">
+                  {subj.name}
+                </h3>
+                <table className="w-full text-[10px]">
+                  <tbody>
+                    {subj.criteria.map((c, idx) => (
+                      <tr key={idx}>
+                        <td className="py-1 pr-4 leading-snug w-full border-b border-gray-100">
+                          {c.description}
+                        </td>
+                        <td className="py-1 text-right border-b border-gray-100">
+                          <span className="inline-block border border-black px-1 font-bold">{parseFloat(c.score).toFixed(2).replace(".", ",")}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ))}
           </div>
 
-          {/* Level Info Box */}
-          <div className={`mx-6 mb-6 rounded-xl p-4 ${
-            subject.level === "Exceeding"
-              ? "bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/40"
-              : subject.level === "Meeting"
-              ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/40"
-              : "bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/40"
-          }`}>
-            <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${style.text}`}>
-              Status Pencapaian
-            </p>
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              {subject.level === "Exceeding"
-                ? "Luar biasa! Siswa telah melampaui ekspektasi dalam mata pelajaran ini."
-                : subject.level === "Meeting"
-                ? "Bagus! Siswa sudah memenuhi standar yang diharapkan dalam mata pelajaran ini."
-                : "Perlu peningkatan lebih lanjut untuk mencapai standar yang diharapkan."}
-            </p>
+          {/* Summary Section Print */}
+          <div className="pt-6 border-t-2 border-black mt-8">
+            <div className="flex justify-between items-center py-2 px-4 bg-gray-100">
+              <span className="text-sm font-black uppercase">Average</span>
+              <span className="font-black text-lg">{parseFloat(domainAvg).toFixed(2).replace(".", ",")}</span>
+            </div>
+
+            <div className="mt-10 grid grid-cols-2 gap-10">
+              <div className="space-y-3">
+                <p className="text-xs font-black uppercase italic">Level</p>
+                <div className="space-y-1 text-[9px]">
+                  <p><span className="font-mono w-20 inline-block">[1.00 - 1.99]</span> <span className="font-bold italic">Improving</span></p>
+                  <p><span className="font-mono w-20 inline-block">[2.00 - 2.49]</span> <span className="font-bold italic">Meeting expectations</span></p>
+                  <p><span className="font-mono w-20 inline-block">[2.50 - 3.00]</span> <span className="font-bold italic">Exceeding expectations</span></p>
+                </div>
+              </div>
+              <div className="space-y-3 text-right">
+                <p className="text-xs font-black uppercase italic">Teachers:</p>
+                <div className="space-y-1 text-[9px]">
+                  {domainSubjects.map((subj) => (
+                    <p key={subj.name}>
+                      <span className="font-bold italic">{subj.teacher}</span> [{subj.name.split(" ")[0]}]
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Trend across terms */}
-      {trend.length > 1 && (
-        <div className="bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
-            <h2 className="text-base font-bold text-gray-800 dark:text-white/90">Tren Nilai — {subject.name}</h2>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Perbandingan nilai antar term</p>
-          </div>
-          <div className="p-6 overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50 dark:bg-gray-800/50 rounded-xl">
-                  <th className="text-left px-4 py-2 text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Term</th>
-                  <th className="text-center px-4 py-2 text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Rata-rata</th>
-                  <th className="text-center px-4 py-2 text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Level</th>
-                  <th className="text-left px-4 py-2 text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider hidden md:table-cell">Progress</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                {trend.map((t, i) => {
-                  const tStyle = getLevelStyle(t.level as never);
-                  return (
-                    <tr
-                      key={i}
-                      className={`${
-                        `${report.academicYear} ${report.term}` === t.term
-                          ? "bg-indigo-50/50 dark:bg-indigo-900/10"
-                          : ""
-                      }`}
-                    >
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          {`${report.academicYear} ${report.term}` === t.term && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
-                          )}
-                          <span className={`font-medium text-sm ${
-                            `${report.academicYear} ${report.term}` === t.term
-                              ? "text-indigo-700 dark:text-indigo-400 font-bold"
-                              : "text-gray-600 dark:text-gray-400"
-                          }`}>
-                            {t.term}
-                          </span>
-                          {`${report.academicYear} ${report.term}` === t.term && (
-                            <span className="text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded-md">
-                              Saat ini
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <span className={`text-base font-black ${tStyle.text}`}>{t.avg}</span>
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${tStyle.badge}`}>
-                          {t.level}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 hidden md:table-cell w-48">
-                        <ScoreBar score={t.avg!} />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Subject navigation */}
-      <div className="flex items-center justify-between gap-4">
-        {prevSubject ? (
-          <Link
-            href={`/parent/report/${termSlug}/${subjectToSlug(prevSubject.name)}`}
-            className="flex items-center gap-2 text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-2.5 shadow-sm hover:shadow-md"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-            <div className="text-left">
-              <p className="text-[10px] text-gray-400 uppercase tracking-wide">Sebelumnya</p>
-              <p className="truncate max-w-[120px]">{prevSubject.name}</p>
-            </div>
-          </Link>
-        ) : (
-          <div />
-        )}
-
-        <Link
-          href={`/parent/report/${termSlug}`}
-          className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
-        >
-          Semua Mapel
-        </Link>
-
-        {nextSubject ? (
-          <Link
-            href={`/parent/report/${termSlug}/${subjectToSlug(nextSubject.name)}`}
-            className="flex items-center gap-2 text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-2.5 shadow-sm hover:shadow-md"
-          >
-            <div className="text-right">
-              <p className="text-[10px] text-gray-400 uppercase tracking-wide">Berikutnya</p>
-              <p className="truncate max-w-[120px]">{nextSubject.name}</p>
-            </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-          </Link>
-        ) : (
-          <div />
-        )}
       </div>
     </div>
   );
