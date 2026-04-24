@@ -63,8 +63,8 @@ export default function MentorDashboard() {
           <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-4">Info Akademik</h3>
           <div className="space-y-3">
             <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-transparent dark:border-gray-700 transition-colors">
-              <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Tahun Ajaran</p>
-              <p className="text-sm font-bold text-gray-700 dark:text-gray-200">2026 / 2027</p>
+              <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Years</p>
+              <p className="text-sm font-bold text-gray-700 dark:text-gray-200">1</p>
             </div>
             <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-transparent dark:border-gray-700 transition-colors">
               <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Term</p>
