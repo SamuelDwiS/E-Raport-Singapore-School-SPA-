@@ -2,17 +2,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import { usePathname } from "next/navigation";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import { Dropdown } from "@/components/ui/dropdown/Dropdown";
+import { DropdownItem } from "@/components/ui/dropdown/DropdownItem";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-  const basePath = pathname.split('/')[1] || 'mentor';
-  const profileUrl = `/${basePath}/profile`;
 
-  function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
   e.stopPropagation();
   setIsOpen((prev) => !prev);
 }
@@ -76,7 +72,7 @@ export default function UserDropdown() {
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href={profileUrl}
+              href="/parent/profile"
               className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
@@ -97,11 +93,11 @@ export default function UserDropdown() {
               Edit profile
             </DropdownItem>
           </li>
-          {/* <li>
+          <li>
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href={profileUrl}
+              href="/parent/profile"
               className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
@@ -120,13 +116,13 @@ export default function UserDropdown() {
                 />
               </svg>
               Account settings
-            </DropdownItem> */}
-          {/* </li> */}
+            </DropdownItem>
+          </li>
           <li>
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href={profileUrl}
+              href="/parent/profile"
               className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
@@ -149,7 +145,7 @@ export default function UserDropdown() {
           </li>
         </ul>
         <Link
-          href="/auth"
+          href="/signin"
           className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
           <svg

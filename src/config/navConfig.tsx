@@ -26,41 +26,22 @@ export type NavItem = {
 };
 
 export type NavSection = {
-  label: string; // 
+  label: string; 
   items: NavItem[];
 };
 
-export type UserRole = "user" | "teacher" | "mentor" | "parent";
+export type UserRole = | "teacher" | "mentor" | "parent";
 
 
 export const ROLE_META: Record<UserRole, { label: string; basePath: string; color: string }> = {
-  user: { label: "Guru Mata Pelajaran", basePath: "/admin", color: "text-blue-500" },
-  teacher: { label: "Guru Mata Pelajaran", basePath: "/teacher", color: "text-blue-500" },
-  mentor:  { label: "Wali Kelas",          basePath: "/mentor",  color: "text-emerald-500" },
-  parent:  { label: "Wali Murid",          basePath: "/parent",  color: "text-orange-500" },
+  teacher: { label: "Teacher", basePath: "/teacher", color: "text-blue-500" },
+  mentor:  { label: "Mentor",          basePath: "/mentor",  color: "text-emerald-500" },
+  parent:  { label: "Parent Student",          basePath: "/parent",  color: "text-blue-400" },
 };
 
 
 export const NAV_CONFIG: Record<UserRole, NavSection[]> = {
 
-  user: [
-    {
-      label: "Menu",
-      items: [
-        { name: "Dashboard",      icon: <GridIcon />,       path: "/teacher" },
-        {
-          name: "Input Nilai",
-          icon: <ListIcon />,
-          subItems: [
-            { name: "Per Mata Pelajaran", path: "/teacher/report" },
-            { name: "Riwayat Input",      path: "/teacher/report/history" },
-          ],
-        },
-        { name: "Jadwal",         icon: <CalenderIcon />,   path: "/teacher/schedule" },
-        { name: "Profil",         icon: <UserCircleIcon />, path: "/teacher/profile" },
-      ],
-    },
-  ],
   teacher: [
     {
       label: "Menu",
@@ -71,9 +52,6 @@ export const NAV_CONFIG: Record<UserRole, NavSection[]> = {
           icon: <ListIcon />, path: "/teacher/report" 
         },
         { name: "Data Siswa",     icon: <TableIcon />,      path: "/teacher/students" },
-
-        // { name: "Jadwal",         icon: <CalenderIcon />,   path: "/teacher/schedule" },
-        // { name: "Profil",         icon: <UserCircleIcon />, path: "/teacher/profile" },
       ],
     },
   ],
@@ -110,15 +88,15 @@ export const NAV_CONFIG: Record<UserRole, NavSection[]> = {
             { name: "Grafik Nilai",   path: "/parent/report/chart" },
           ],
         },
-        // { name: "Jadwal",         icon: <CalenderIcon />,   path: "/parent/schedule" },
-        { name: "Profil",         icon: <UserCircleIcon />, path: "/parent/profile" },
-      ],
-    },
-    {
-      label: "Komunikasi",
-      items: [
         { name: "Catatan Guru",   icon: <ListIcon />,       path: "/parent/notes" },
+        // { name: "Jadwal",         icon: <CalenderIcon />,   path: "/parent/schedule" },
       ],
     },
+    // {
+    //   label: "Komunikasi",
+    //   items: [
+        
+    //   ],
+    // },
   ],
 };

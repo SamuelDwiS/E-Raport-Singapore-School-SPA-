@@ -24,7 +24,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
   const pathname = usePathname();
 
   const sections: NavSection[] = NAV_CONFIG[role];
-  const roleMeta = ROLE_META[role] || ROLE_META["user"]; // Fallback to 'user' role meta if not found
+  const roleMeta = ROLE_META[role] || ROLE_META["parent"]; // Fallback to 'user' role meta if not found
 
   const [openSubmenu, setOpenSubmenu] = useState<{
     sectionIdx: number;
@@ -196,15 +196,15 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
               />
               <Image
                 className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
+                src="/images/logo/logo_E-Raport.png"
                 alt="Logo"
-                width={150}
-                height={40}
+                width={100}
+                height={100}
               />
             </>
           ) : (
             <Image
-              src="/images/logo/logo-icon.svg"
+              src="/images/logo/logo_E-Raport.png"
               alt="Logo"
               width={32}
               height={32}
