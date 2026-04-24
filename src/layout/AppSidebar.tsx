@@ -251,7 +251,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
 
           </div>
         </nav>
-         {useSidebar && (
+         {showLabel && (
         <div className="px-4 py-6 mt-auto">
           <div className="rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-4 text-center">
             <p className="text-xs text-gray-500 dark:text-gray-400">

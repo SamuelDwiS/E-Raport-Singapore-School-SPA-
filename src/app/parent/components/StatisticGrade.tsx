@@ -155,9 +155,9 @@ export default function StatisticGrade() {
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
             Grafik Perkembangan Nilai
           </h3>
-          <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
+          {/* <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
             Tren nilai ujian dan tugas per bulan
-          </p>
+          </p> */}
         </div>
         <div className="flex items-center gap-3 sm:justify-end">
           <ChartTab />

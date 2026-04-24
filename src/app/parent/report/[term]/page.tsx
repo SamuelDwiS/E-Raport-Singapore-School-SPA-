@@ -8,6 +8,7 @@ import {
   getOverallAvg,
   getOverallLevel,
   termToSlug,
+  subjectToSlug,
 } from "../reportData";
 
 // ─── Score Badge ───────────────────────────────────────────────────────────────
@@ -157,6 +158,15 @@ export default function ReportDetailPage() {
                   <span className={`text-lg font-black ${subStyle.text}`}>
                     {subj.average}
                   </span>
+                  <Link
+                    href={`/parent/report/${slug}/${subjectToSlug(subj.name)}`}
+                    className="ml-2 p-1.5 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-400 hover:text-indigo-600 transition-colors"
+                    title="Lihat Detail"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </Link>
                 </div>
               </div>
 

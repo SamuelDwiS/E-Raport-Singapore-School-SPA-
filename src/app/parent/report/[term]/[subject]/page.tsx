@@ -5,8 +5,6 @@ import { useParams } from "next/navigation";
 import {
   REPORTS,
   getLevelStyle,
-  getOverallAvg,
-  getOverallLevel,
   termToSlug,
   subjectToSlug,
 } from "../../reportData";
@@ -143,7 +141,7 @@ export default function SubjectDetailPage() {
               {report.academicYear} • {report.class} • {report.term}
             </p>
             <h1 className="text-2xl sm:text-3xl font-black leading-tight">{subject.name}</h1>
-            <p className="text-white/70 text-sm mt-2">Wali Kelas: {report.mentor}</p>
+            <p className="text-white/70 text-sm mt-2">Guru Pengampu: {subject.teacher}</p>
             <div className="flex items-center gap-3 mt-4">
               <span className={`text-xs font-bold px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm`}>
                 {subject.level} Expectations
@@ -258,7 +256,6 @@ export default function SubjectDetailPage() {
               <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                 {trend.map((t, i) => {
                   const tStyle = getLevelStyle(t.level as never);
-                  const isCurrentTerm = termSlug === REPORTS.find((r) => `${r.academicYear} ${r.term}` === t.term && termToSlug(r) === termSlug) !== undefined;
                   return (
                     <tr
                       key={i}
