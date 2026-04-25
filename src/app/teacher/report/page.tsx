@@ -77,17 +77,17 @@ function calcAverage(grades: StudentGrade, criteria: Criterion[]): string {
 function getLevelLabel(avg: string): { label: string; color: string } {
   const v = parseFloat(avg);
   if (isNaN(v) || avg === "—") return { label: "—", color: "text-gray-400 dark:text-gray-500" };
-  if (v >= 2.5)  return { label: "Exceeding Expectations", color: "text-success-600 dark:text-success-400" };
-  if (v >= 2.0)  return { label: "Meeting Expectations",  color: "text-brand-600 dark:text-brand-400" };
-  return            { label: "Improving",               color: "text-warning-600 dark:text-warning-400" };
+  if (v >= 2.5)  return { label: "Exceeding Expectations", color: "text-emerald-600 dark:text-emerald-400" };
+  if (v >= 2.0)  return { label: "Meeting Expectations",  color: "text-blue-600 dark:text-blue-400" };
+  return            { label: "Improving",               color: "text-amber-600 dark:text-amber-400" };
 }
 
 function scoreColor(val: string): string {
   const v = parseFloat(val);
   if (isNaN(v) || val === "") return "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100";
-  if (v >= 2.5) return "border-success-500 bg-success-50 dark:bg-success-950/30 text-success-700 dark:text-success-400";
-  if (v >= 2.0) return "border-brand-500 bg-brand-50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-400";
-  return "border-warning-500 bg-warning-50 dark:bg-warning-950/30 text-warning-700 dark:text-warning-400";
+  if (v >= 2.5) return "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400";
+  if (v >= 2.0) return "border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400";
+  return "border-amber-500 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400";
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -154,17 +154,17 @@ export default function TeacherReportPage() {
     <div className="max-w-6xl mx-auto p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100 transition-colors print:bg-white print:p-0">
       
       {/* ── Header ────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 print:hidden">
+      <div className="flex justify-between items-center bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 print:hidden">
         <div>
           <h1 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight">E-Report Management</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{subject.teacher} • {selectedClass} • {selectedTerm}</p>
         </div>
         {view === "form" && (
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto mt-2 md:mt-0">
-            <button onClick={handleExport} className="w-full sm:w-auto text-sm font-bold bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+          <div className="flex gap-4">
+            <button onClick={handleExport} className="text-sm font-bold bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition">
               🖨️ Export Raport
             </button>
-            <button onClick={() => setView("list")} className="w-full sm:w-auto text-sm font-bold text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition">
+            <button onClick={() => setView("list")} className="text-sm font-bold text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition">
               ← Kembali ke Daftar
             </button>
           </div>
@@ -174,22 +174,21 @@ export default function TeacherReportPage() {
       {view === "list" ? (
         /* ─── TAMPILAN LIST SISWA ─── */
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="p-6 border-b border-gray-50 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/30 dark:bg-gray-800/50">
+          <div className="p-6 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-gray-50/30 dark:bg-gray-800/50">
             <h2 className="font-bold text-gray-700 dark:text-gray-200">Daftar Siswa {selectedClass} - {selectedTerm}</h2>
-            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-               <select className="w-full sm:w-auto text-xs font-bold border-none bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 outline-none" value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)}>
+            <div className="flex gap-2">
+               <select className="text-xs font-bold border-none bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 outline-none" value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)}>
                   {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
                </select>
-               <select className="w-full sm:w-auto text-xs font-bold border-none bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 outline-none" value={selectedTerm} onChange={(e) => setSelectedTerm(e.target.value)}>
+               <select className="text-xs font-bold border-none bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 outline-none" value={selectedTerm} onChange={(e) => setSelectedTerm(e.target.value)}>
                   {TERMS.map(t => <option key={t} value={t}>{t}</option>)}
                </select>
-               <select className="w-full sm:w-auto text-xs font-bold border-none bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 outline-none" value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)}>
+               <select className="text-xs font-bold border-none bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 outline-none" value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)}>
                   {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                </select>
             </div>
           </div>
-          <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[600px]">
+          <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] uppercase tracking-widest text-gray-400 dark:text-gray-500 bg-gray-50/50 dark:bg-gray-900/50">
                 <th className="px-8 py-4">Siswa</th>
@@ -202,9 +201,9 @@ export default function TeacherReportPage() {
               {students.map((s) => {
                 const avg = calcAverage(s.grades, subject.criteria);
                 return (
-                  <tr key={s.id} className="hover:bg-brand-50/30 dark:hover:bg-brand-900/20 transition-all group">
+                  <tr key={s.id} className="hover:bg-indigo-50/30 dark:hover:bg-indigo-900/20 transition-all group">
                     <td className="px-8 py-5">
-                      <p className="font-bold text-gray-800 dark:text-gray-200 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{s.name}</p>
+                      <p className="font-bold text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{s.name}</p>
                     </td>
                     <td className="px-6 py-5 text-sm text-gray-400 dark:text-gray-500 font-mono">{s.nis}</td>
                     <td className="px-6 py-5 text-center">
@@ -213,7 +212,7 @@ export default function TeacherReportPage() {
                     <td className="px-8 py-5 text-right">
                       <button 
                         onClick={() => { setSelectedStudentId(s.id); setView("form"); }}
-                        className="bg-brand-500 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-brand-600 dark:hover:bg-brand-500 shadow-lg shadow-brand-200 dark:shadow-none transition-all active:scale-95"
+                        className="bg-indigo-600 text-white px-5 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 dark:hover:bg-indigo-500 shadow-lg shadow-indigo-200 dark:shadow-none transition-all active:scale-95"
                       >
                         Input Nilai Detail
                       </button>
@@ -229,15 +228,15 @@ export default function TeacherReportPage() {
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 print:m-0 print:shadow-none print:border-none">
           <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl dark:shadow-none border border-gray-100 dark:border-gray-700 overflow-hidden print:border-none print:shadow-none">
             {/* Form Header */}
-            <div className="p-8 bg-brand-900 dark:bg-brand-950 text-white print:bg-white print:text-black print:border-b-2 print:border-black print:p-4">
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <div className="p-8 bg-indigo-900 dark:bg-indigo-950 text-white print:bg-white print:text-black print:border-b-2 print:border-black print:p-4">
+              <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-brand-300 dark:text-brand-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-1 print:text-gray-600">Aesthetics Domain • {selectedClass} • {selectedTerm}</p>
+                  <p className="text-indigo-300 dark:text-indigo-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-1 print:text-gray-600">Aesthetics Domain • {selectedClass} • {selectedTerm}</p>
                   <h2 className="text-3xl font-black">{currentStudent?.name}</h2>
-                  <p className="text-brand-200 dark:text-brand-300 text-sm mt-1 font-medium print:text-gray-500">NIS: {currentStudent?.nis}</p>
+                  <p className="text-indigo-200 dark:text-indigo-300 text-sm mt-1 font-medium print:text-gray-500">NIS: {currentStudent?.nis}</p>
                 </div>
-                <div className="text-left sm:text-right">
-                   <p className="text-brand-300 dark:text-brand-400 text-[10px] font-bold uppercase mb-1 print:text-gray-600">Subject</p>
+                <div className="text-right">
+                   <p className="text-indigo-300 dark:text-indigo-400 text-[10px] font-bold uppercase mb-1 print:text-gray-600">Subject</p>
                    <p className="font-bold text-xl">{subject.name}</p>
                 </div>
               </div>
@@ -256,7 +255,7 @@ export default function TeacherReportPage() {
                   {subject.criteria.map((c) => (
                     <tr key={c.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition group/row print:hover:bg-white">
                       <td className="px-8 py-6 print:px-4 print:py-4">
-                        <div className="flex bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-brand-100 dark:focus-within:ring-brand-900 transition-all shadow-sm dark:shadow-none print:border-none print:shadow-none print:bg-white">
+                        <div className="flex bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-100 dark:focus-within:ring-indigo-900 transition-all shadow-sm dark:shadow-none print:border-none print:shadow-none print:bg-white">
                           <textarea
                             value={c.description}
                             onChange={(e) => updateCriterion(subject.id, c.id, e.target.value)}
@@ -267,7 +266,7 @@ export default function TeacherReportPage() {
                           {subject.criteria.length > 1 && (
                             <button
                               onClick={() => removeCriterion(subject.id, c.id)}
-                              className="px-4 text-gray-300 dark:text-gray-600 hover:text-error-500 dark:hover:text-error-400 transition-colors flex items-center justify-center font-bold text-xl group-hover/row:text-error-400 print:hidden"
+                              className="px-4 text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 transition-colors flex items-center justify-center font-bold text-xl group-hover/row:text-red-400 print:hidden"
                               title="Hapus Kriteria"
                             >
                               ×
@@ -282,7 +281,7 @@ export default function TeacherReportPage() {
                           value={currentStudent?.grades[c.id] || ""}
                           onChange={(e) => updateGrade(currentStudent!.id, c.id, e.target.value)}
                           placeholder="0.00"
-                          className={`w-24 text-center py-3 border-2 dark:border-gray-700 rounded-2xl text-lg font-black outline-none focus:ring-4 focus:ring-brand-100 dark:focus-within:ring-brand-900 transition-all print:border-none print:text-black print:bg-white ${scoreColor(currentStudent?.grades[c.id] || "")}`}
+                          className={`w-24 text-center py-3 border-2 dark:border-gray-700 rounded-2xl text-lg font-black outline-none focus:ring-4 focus:ring-indigo-100 dark:focus-within:ring-indigo-900 transition-all print:border-none print:text-black print:bg-white ${scoreColor(currentStudent?.grades[c.id] || "")}`}
                         />
                       </td>
                     </tr>
@@ -292,7 +291,7 @@ export default function TeacherReportPage() {
                     <td colSpan={2} className="px-8 py-4 text-center border-t border-dashed border-gray-200 dark:border-gray-700">
                       <button
                         onClick={() => addCriterion(subject.id)}
-                        className="text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 bg-brand-50 dark:bg-brand-900/30 hover:bg-brand-100 dark:hover:bg-brand-900/50 px-6 py-2 rounded-xl transition-colors shadow-sm outline-none"
+                        className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-6 py-2 rounded-xl transition-colors shadow-sm outline-none"
                       >
                         + Tambah Kriteria / Indikator
                       </button>
@@ -300,9 +299,9 @@ export default function TeacherReportPage() {
                   </tr>
 
                   {/* Summary Average Row (Persis Excel) */}
-                  <tr className="bg-brand-50/50 dark:bg-brand-900/20 print:bg-white print:border-t-2 print:border-black">
+                  <tr className="bg-indigo-50/50 dark:bg-indigo-900/20 print:bg-white print:border-t-2 print:border-black">
                     <td className="px-8 py-6 text-right print:px-4 print:py-4">
-                      <span className="text-sm font-black text-brand-900 dark:text-brand-300 uppercase tracking-widest print:text-black">Average Score</span>
+                      <span className="text-sm font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-widest print:text-black">Average Score</span>
                     </td>
                     <td className="px-8 py-6 text-center print:px-4 print:py-4">
                       <div className="flex flex-col items-center">
@@ -320,11 +319,11 @@ export default function TeacherReportPage() {
             </div>
 
             {/* Form Footer Actions */}
-            <div className="p-8 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
+            <div className="p-8 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center print:hidden">
                <div className="flex gap-6">
                   <div>
                     <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase">Scale Info</p>
-                    <p className="text-[11px] font-bold text-success-600 dark:text-success-400">2.50+ Exceeding</p>
+                    <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">2.50+ Exceeding</p>
                   </div>
                   <div>
                     <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase">Teacher</p>
@@ -333,7 +332,7 @@ export default function TeacherReportPage() {
                </div>
                <button 
                 onClick={handleSave} 
-                className={`w-full sm:w-auto px-10 py-4 rounded-2xl font-black text-sm tracking-wide transition-all shadow-xl ${saved ? 'bg-success-500 dark:bg-success-600 text-white' : 'bg-brand-500 dark:bg-brand-600 hover:bg-brand-600 dark:hover:bg-brand-500 text-white shadow-brand-200 dark:shadow-none active:scale-95'}`}
+                className={`px-10 py-4 rounded-2xl font-black text-sm tracking-wide transition-all shadow-xl ${saved ? 'bg-emerald-500 dark:bg-emerald-600 text-white' : 'bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white shadow-indigo-200 dark:shadow-none active:scale-95'}`}
                >
                  {saved ? "✓ BERHASIL DISIMPAN" : "SIMPAN NILAI RAPORT"}
                </button>
