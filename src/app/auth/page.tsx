@@ -25,7 +25,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 to-brand-100 p-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900">E-Report</h1>
@@ -42,7 +42,7 @@ export default function AuthPage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               placeholder="you@example.com"
               required
             />
@@ -57,7 +57,7 @@ export default function AuthPage() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               placeholder="••••••••"
               required
             />
@@ -71,7 +71,7 @@ export default function AuthPage() {
 
           <button
             type="submit"
-            className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
+            className="flex w-full justify-center rounded-md border border-transparent bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-colors"
           >
             Sign in
           </button>
@@ -81,15 +81,15 @@ export default function AuthPage() {
           <h3 className="text-sm font-medium text-gray-900 mb-3">Dummy Accounts:</h3>
           <div className="space-y-2 text-xs text-gray-600 bg-gray-50 p-3 rounded-md">
             <div className="flex justify-between">
-              <span className="font-semibold text-indigo-700">Mentor:</span>
+              <span className="font-semibold text-brand-600">Mentor:</span>
               <span>mentor@gmail.com / mentor123</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-semibold text-indigo-700">Teacher:</span>
+              <span className="font-semibold text-brand-600">Teacher:</span>
               <span>teacher@gmail.com / teacher123</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-semibold text-indigo-700">Parent:</span>
+              <span className="font-semibold text-brand-600">Parent:</span>
               <span>parent@gmail.com / parent123</span>
             </div>
           </div>

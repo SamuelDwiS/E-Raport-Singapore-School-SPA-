@@ -27,9 +27,9 @@ export default function MentorReportPage() {
         
         
         {/* Filter & Search Sederhana */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex flex-col md:flex-row w-full md:w-auto items-center gap-3">
           <select 
-            className="px-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+            className="w-full md:w-auto px-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
             value={selectedClass}
             onChange={(e) => setSelectedClass(e.target.value)}
           >
@@ -37,7 +37,7 @@ export default function MentorReportPage() {
             {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <select 
-            className="px-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+            className="w-full md:w-auto px-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
             value={selectedTerm}
             onChange={(e) => setSelectedTerm(e.target.value)}
           >
@@ -47,14 +47,15 @@ export default function MentorReportPage() {
           <input 
             type="text" 
             placeholder="Cari nama siswa..." 
-            className="px-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+            className="w-full md:w-auto px-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
           />
         </div>
       </div>
 
       {/* Tabel Siswa */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
-        <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[600px]">
           <thead>
             <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
               <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">NIS</th>
@@ -67,7 +68,7 @@ export default function MentorReportPage() {
           </thead>
           <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
             {students.map((student) => (
-              <tr key={student.id} className="hover:bg-gray-50 dark:hover:bg-indigo-900/20 transition-colors">
+              <tr key={student.id} className="hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors">
                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.nis}</td>
                 <td className="px-6 py-4 text-sm font-bold text-gray-800 dark:text-gray-200">{student.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.class}</td>
@@ -75,15 +76,15 @@ export default function MentorReportPage() {
                 <td className="px-6 py-4">
                   <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
                     student.status === 'Lengkap' 
-                      ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
-                      : 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
+                      ? 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-400' 
+                      : 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-400'
                   }`}>
                     {student.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-center">
                   <div className="flex gap-2 justify-center">
-                    <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-indigo-700 dark:hover:bg-indigo-500 transition-all">
+                    <button className="bg-brand-500 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-brand-600 transition-all shadow-sm">
                       Detail Report
                     </button>
                     <button onClick={() => window.print()} className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all" title="Print/Export PDF">
@@ -95,12 +96,13 @@ export default function MentorReportPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Informasi Tambahan */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-4 flex gap-3 transition-colors">
-        <div className="w-5 h-5 bg-blue-500 dark:bg-blue-400 rounded-full flex items-center justify-center text-white dark:text-blue-900 text-[10px] font-bold">!</div>
-        <p className="text-xs text-blue-800 dark:text-blue-300 leading-relaxed">
+      <div className="bg-brand-50 dark:bg-brand-900/20 border border-brand-100 dark:border-brand-800 rounded-xl p-4 flex gap-3 transition-colors">
+        <div className="w-5 h-5 bg-brand-500 dark:bg-brand-400 rounded-full flex items-center justify-center text-white dark:text-brand-900 text-[10px] font-bold shrink-0">!</div>
+        <p className="text-xs text-brand-800 dark:text-brand-300 leading-relaxed">
           <strong>Tips:</strong> Tombol "Detail Report" akan membawa Anda ke halaman detail raport siswa. Pastikan nilai dari Guru Mapel sudah lengkap sebelum memfinalisasi deskripsi. Gunakan tombol "Export PDF" untuk mencetak raport masing-masing.
         </p>
       </div>

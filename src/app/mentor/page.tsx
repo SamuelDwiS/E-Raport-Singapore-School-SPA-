@@ -3,15 +3,15 @@ import React from 'react';
 export default function MentorDashboard() {
   // Data dummy
   const stats = [
-    { label: "Total Siswa", value: "24", color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-900/30" },
-    { label: "Deskripsi Selesai", value: "18", color: "text-green-600 dark:text-green-400", bg: "bg-green-50 dark:bg-green-900/30" },
-    { label: "Perlu Catatan", value: "6", color: "text-orange-600 dark:text-orange-400", bg: "bg-orange-50 dark:bg-orange-900/30" },
+    { label: "Total Siswa", value: "24", color: "text-brand-600 dark:text-brand-400", bg: "bg-brand-50 dark:bg-brand-900/30" },
+    { label: "Deskripsi Selesai", value: "18", color: "text-success-600 dark:text-success-400", bg: "bg-success-50 dark:bg-success-900/30" },
+    { label: "Perlu Catatan", value: "6", color: "text-warning-600 dark:text-warning-400", bg: "bg-warning-50 dark:bg-warning-900/30" },
   ];
 
   return (
     <div className="flex flex-col gap-6 p-4">
       {/* Welcome Banner */}
-      <div className="bg-indigo-600 dark:bg-indigo-800 rounded-[2rem] p-8 text-white shadow-lg">
+      <div className="bg-brand-500 dark:bg-brand-700 rounded-[2rem] p-8 text-white shadow-lg">
         <h1 className="text-3xl font-bold mb-2">Halo, Mentor! 👋</h1>
         <p className="opacity-90 max-w-md">
           Selamat datang di dashboard mentor anda.
@@ -39,9 +39,9 @@ export default function MentorDashboard() {
           <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-4">Aktivitas Terbaru Guru Mapel</h3>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between p-4 border-b border-gray-50 dark:border-gray-700 last:border-0 transition-colors">
+              <div key={i} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-b border-gray-50 dark:border-gray-700 last:border-0 transition-colors gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold">
+                  <div className="w-10 h-10 bg-brand-50 dark:bg-brand-900/50 rounded-full flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold shrink-0">
                     S
                   </div>
                   <div>
@@ -49,7 +49,7 @@ export default function MentorDashboard() {
                     <p className="text-xs text-gray-500 dark:text-gray-400 font-italic">Nilai Raport telah diperbarui</p>
                   </div>
                 </div>
-                <button className="text-xs font-bold text-indigo-600 dark:text-indigo-400 border border-indigo-600 dark:border-indigo-400 px-3 py-1 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors">
+                <button className="w-full sm:w-auto text-xs font-bold text-brand-600 dark:text-brand-400 border border-brand-500 dark:border-brand-400 px-3 py-2 sm:py-1 rounded-lg hover:bg-brand-50 dark:hover:bg-brand-900/30 transition-colors">
                   Cek Nilai
                 </button>
               </div>
@@ -69,8 +69,8 @@ export default function MentorDashboard() {
               <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Term</p>
               <p className="text-sm font-bold text-gray-700 dark:text-gray-200">2</p>
             </div>
-            <div className="p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/30 rounded-xl mt-4 transition-colors">
-              <p className="text-xs text-orange-700 dark:text-orange-400 leading-snug">
+            <div className="p-4 bg-warning-50 dark:bg-warning-900/20 border border-warning-100 dark:border-warning-900/30 rounded-xl mt-4 transition-colors">
+              <p className="text-xs text-warning-700 dark:text-warning-400 leading-snug">
                 <strong>Catatan:</strong> Batas pengisian deskripsi adalah 3 hari sebelum pembagian raport.
               </p>
             </div>

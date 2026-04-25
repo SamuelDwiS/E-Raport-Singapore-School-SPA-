@@ -47,26 +47,26 @@ export function getLevelStyle(level: Level) {
     case "Exceeding":
       return {
         badge:
-          "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-        text: "text-emerald-600 dark:text-emerald-400",
-        bar: "bg-emerald-500",
-        glow: "shadow-emerald-200 dark:shadow-emerald-900/40",
+          "bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-400",
+        text: "text-success-600 dark:text-success-400",
+        bar: "bg-success-500",
+        glow: "shadow-success-200 dark:shadow-success-900/40",
       };
     case "Meeting":
       return {
         badge:
-          "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-        text: "text-blue-600 dark:text-blue-400",
-        bar: "bg-blue-500",
-        glow: "shadow-blue-200 dark:shadow-blue-900/40",
+          "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400",
+        text: "text-brand-600 dark:text-brand-400",
+        bar: "bg-brand-500",
+        glow: "shadow-brand-200 dark:shadow-brand-900/40",
       };
     case "Improving":
       return {
         badge:
-          "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-        text: "text-amber-600 dark:text-amber-400",
-        bar: "bg-amber-500",
-        glow: "shadow-amber-200 dark:shadow-amber-900/40",
+          "bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-400",
+        text: "text-warning-600 dark:text-warning-400",
+        bar: "bg-warning-500",
+        glow: "shadow-warning-200 dark:shadow-warning-900/40",
       };
     default:
       return {
