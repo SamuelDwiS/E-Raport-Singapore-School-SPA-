@@ -80,7 +80,8 @@ export default function ReportPage() {
         </div>
       ) : (
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-lg overflow-hidden transition-colors">
-          <div className="overflow-x-auto">
+          {/* Desktop View: Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-900/50">
@@ -95,7 +96,7 @@ export default function ReportPage() {
                 {report.subjects.map((subj, index) => {
                   const slug = termToSlug(report);
                   return (
-                    <tr className="hover:bg-gray-50 dark:hover:bg-indigo-900/20 transition-colors group">
+                    <tr key={`desktop-${subj.name}`} className="hover:bg-gray-50 dark:hover:bg-indigo-900/20 transition-colors group">
                       <td className="px-6 py-4 text-sm font-mono text-gray-500 text-center">
                         {index + 1}
                       </td>
@@ -125,6 +126,36 @@ export default function ReportPage() {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile View: Cards */}
+          <div className="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+            {report.subjects.map((subj, index) => {
+              const slug = termToSlug(report);
+              return (
+                <div key={`mobile-${subj.name}`} className="p-5 hover:bg-gray-50 dark:hover:bg-indigo-900/10 transition-colors">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex gap-3">
+                      <span className="text-[10px] font-mono text-gray-400 mt-1">{index + 1}</span>
+                      <div>
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight mb-1">{subj.name}</h3>
+                        <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">{subj.teacher}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Score</p>
+                      <p className="text-lg font-black text-indigo-600 dark:text-indigo-400">{parseFloat(subj.average).toFixed(1)}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/parent/report/${slug}/${subjectToSlug(subj.name)}`}
+                    className="block w-full text-center py-2.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-md active:scale-[0.98] transition-all"
+                  >
+                    View Detail
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

@@ -103,8 +103,9 @@ export default function MentorStudentsPage() {
 
       {/* Tabel Siswa */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[600px]">
+        {/* Desktop View: Table */}
+        <div className="hidden lg:block overflow-x-auto">
+          <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
                 <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">NIS</th>
@@ -118,7 +119,7 @@ export default function MentorStudentsPage() {
             </thead>
             <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
               {filteredStudents.length > 0 ? filteredStudents.map((student) => (
-                <tr key={student.id} className="hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors">
+                <tr key={`desktop-${student.id}`} className="hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors">
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.nis}</td>
                   <td className="px-6 py-4 text-sm font-bold text-gray-800 dark:text-gray-200">{student.name}</td>
                   <td className="px-6 py-4">
@@ -155,6 +156,45 @@ export default function MentorStudentsPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View: Cards */}
+        <div className="lg:hidden divide-y divide-gray-50 dark:divide-gray-700">
+          {filteredStudents.length > 0 ? filteredStudents.map((student) => (
+            <div key={`mobile-${student.id}`} className="p-5 space-y-4 hover:bg-brand-50 dark:hover:bg-brand-900/10 transition-colors">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-bold text-gray-800 dark:text-gray-200 leading-tight">{student.name}</h3>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400 font-mono mt-1">NIS: {student.nis} • {student.year}</p>
+                </div>
+                <span className="px-2 py-1 rounded-lg text-[9px] font-black uppercase bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400">
+                  {student.gender}
+                </span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Address</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">{student.address}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button 
+                  onClick={() => openEditModal(student)}
+                  className="bg-warning-500 text-white py-2.5 rounded-xl text-xs font-bold active:scale-[0.98] transition-all"
+                >
+                  ✏️ Edit
+                </button>
+                <button 
+                  onClick={() => handleDelete(student.id)}
+                  className="bg-error-500 text-white py-2.5 rounded-xl text-xs font-bold active:scale-[0.98] transition-all"
+                >
+                  🗑️ Hapus
+                </button>
+              </div>
+            </div>
+          )) : (
+            <div className="p-10 text-center text-gray-500 dark:text-gray-400">
+               Tidak ada data siswa yang ditemukan.
+            </div>
+          )}
         </div>
       </div>
 
