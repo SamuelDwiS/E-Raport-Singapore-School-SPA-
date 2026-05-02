@@ -110,6 +110,18 @@ export const REPORTS: TermReport[] = [
     teacherNote: "Ananda menunjukkan progres yang sangat baik di akhir tahun ajaran.",
     subjects: [
       {
+        name: "AESTHETICS DOMAIN",
+        teacher: "Mr Dhudy Cahyanto",
+        domain: "AESTHETICS DOMAIN",
+        criteria: [
+          { description: "Displays good spatial awareness while performing activities", score: "3.00" },
+          { description: "Shows developmentally appropriate motor/physical fitness", score: "3.00" },
+          { description: "Demonstrates a good level of skill in most PE activities", score: "3.00" },
+        ],
+        average: "3.00",
+        level: "Exceeding",
+      },
+      {
         name: "PHYSICAL EDUCATION",
         teacher: "Mr Dhudy Cahyanto",
         domain: "AESTHETICS DOMAIN",
@@ -221,7 +233,7 @@ export const REPORTS: TermReport[] = [
         ],
         average: "2.75",
         level: "Exceeding",
-      },
+      }
       {
         name: "BAHASA INDONESIA",
         teacher: "Bu Sari",

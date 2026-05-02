@@ -290,20 +290,12 @@ export default function TeacherReportPage() {
                           <div className="flex bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-100 dark:focus-within:ring-indigo-900 transition-all shadow-sm dark:shadow-none print:border-none print:shadow-none print:bg-white">
                             <textarea
                               value={c.description}
-                              onChange={(e) => updateCriterion(subject.id, c.id, e.target.value)}
+                              readOnly
                               placeholder="Deskripsi kriteria/indikator..."
-                              className="w-full text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed p-3 bg-transparent border-none outline-none resize-none print:p-0 print:text-black print:resize-none"
+                              className="w-full text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed p-3 bg-transparent border-none outline-none resize-none print:p-0 print:text-black print:resize-none cursor-default"
                               rows={2}
                             />
-                            {subject.criteria.length > 1 && (
-                              <button
-                                onClick={() => removeCriterion(subject.id, c.id)}
-                                className="px-4 text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 transition-colors flex items-center justify-center font-bold text-xl group-hover/row:text-red-400 print:hidden"
-                                title="Hapus Kriteria"
-                              >
-                                ×
-                              </button>
-                            )}
+
                           </div>
                         </td>
                         <td className="px-8 py-6 text-center align-middle print:px-4 print:py-4">
@@ -319,16 +311,7 @@ export default function TeacherReportPage() {
                       </tr>
                     ))}
                     
-                    <tr className="bg-white dark:bg-gray-800 print:hidden">
-                      <td colSpan={2} className="px-8 py-4 text-center border-t border-dashed border-gray-200 dark:border-gray-700">
-                        <button
-                          onClick={() => addCriterion(subject.id)}
-                          className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-6 py-2 rounded-xl transition-colors shadow-sm outline-none"
-                        >
-                          + Tambah Kriteria / Indikator
-                        </button>
-                      </td>
-                    </tr>
+
 
                     <tr className="bg-indigo-50/50 dark:bg-indigo-900/20 print:bg-white print:border-t-2 print:border-black">
                       <td className="px-8 py-6 text-right print:px-4 print:py-4">
@@ -355,20 +338,13 @@ export default function TeacherReportPage() {
                   <div key={c.id} className="space-y-3 p-4 bg-gray-50/50 dark:bg-white/[0.02] rounded-2xl border border-gray-100 dark:border-white/5">
                     <div className="flex justify-between items-center">
                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Kriteria / Indikator</p>
-                      {subject.criteria.length > 1 && (
-                        <button 
-                          onClick={() => removeCriterion(subject.id, c.id)}
-                          className="text-red-500 text-xs font-bold bg-red-50 dark:bg-red-900/20 px-3 py-1 rounded-lg"
-                        >
-                          Hapus
-                        </button>
-                      )}
+
                     </div>
                     <textarea
                       value={c.description}
-                      onChange={(e) => updateCriterion(subject.id, c.id, e.target.value)}
+                      readOnly
                       placeholder="Masukkan deskripsi kriteria..."
-                      className="w-full text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      className="w-full text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl outline-none transition-all cursor-default"
                       rows={3}
                     />
                     <div className="flex items-center justify-between gap-4 pt-3 border-t border-gray-100 dark:border-gray-800">
@@ -385,12 +361,7 @@ export default function TeacherReportPage() {
                   </div>
                 ))}
                 
-                <button
-                  onClick={() => addCriterion(subject.id)}
-                  className="w-full py-4 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl text-xs font-bold text-gray-400 hover:text-indigo-500 hover:border-indigo-500/50 transition-all bg-gray-50/50 dark:bg-transparent"
-                >
-                  + Tambah Kriteria Baru
-                </button>
+
 
                 <div className="bg-indigo-600 dark:bg-indigo-500 rounded-2xl p-6 text-white shadow-lg shadow-indigo-200 dark:shadow-none flex justify-between items-center">
                   <div>
