@@ -10,15 +10,15 @@ type Student = {
   year: string;
   gender: string;
   address: string;
-  mentor: string;
+  parent: string;
 };
 
 export default function MentorStudentsPage() {
   const [students, setStudents] = useState<Student[]>([
-    { id: 1, name: "Adrian Li Preman", nis: "2324001", year: "Year 2", gender: "Laki-laki", address: "Jl. Contoh No. 1", mentor: "Pak Budi" },
-    { id: 2, name: "Budi Setiawan", nis: "2324002", year: "Year 2", gender: "Laki-laki", address: "Jl. Contoh No. 2", mentor: "Pak Budi" },
-    { id: 3, name: "Citra Lestari", nis: "2324003", year: "Year 2", gender: "Perempuan", address: "Jl. Contoh No. 3", mentor: "Pak Budi" },
-    { id: 4, name: "Deni Ramadhan", nis: "2324004", year: "Year 3", gender: "Laki-laki", address: "Jl. Contoh No. 4", mentor: "Pak Budi" },
+    { id: 1, name: "Adrian Li Preman", nis: "2324001", year: "Year 2", gender: "Laki-laki", address: "Jl. Contoh No. 1", parent: "Pak Budi" },
+    { id: 2, name: "Budi Setiawan", nis: "2324002", year: "Year 2", gender: "Laki-laki", address: "Jl. Contoh No. 2", parent: "Pak Budi" },
+    { id: 3, name: "Citra Lestari", nis: "2324003", year: "Year 2", gender: "Perempuan", address: "Jl. Contoh No. 3", parent: "Pak Budi" },
+    { id: 4, name: "Deni Ramadhan", nis: "2324004", year: "Year 3", gender: "Laki-laki", address: "Jl. Contoh No. 4", parent: "Pak Budi" },
   ]);
 
   const [selectedYear, setSelectedYear] = useState("");
@@ -26,7 +26,7 @@ export default function MentorStudentsPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [formData, setFormData] = useState({ nis: '', name: '', year: 'Year 1', gender: 'Laki-laki', address: '', mentor: '' });
+  const [formData, setFormData] = useState({ nis: '', name: '', year: 'Year 1', gender: 'Laki-laki', address: '', parent: '' });
 
   // Filtering
   const filteredStudents = students.filter(student => {
@@ -39,13 +39,13 @@ export default function MentorStudentsPage() {
   // Handlers
   const openAddModal = () => {
     setEditingId(null);
-    setFormData({ nis: '', name: '', year: 'Year 1', gender: 'Laki-laki', address: '', mentor: '' });
+    setFormData({ nis: '', name: '', year: 'Year 1', gender: 'Laki-laki', address: '', parent: '' });
     setIsModalOpen(true);
   };
 
   const openEditModal = (student: Student) => {
     setEditingId(student.id);
-    setFormData({ nis: student.nis, name: student.name, year: student.year, gender: student.gender, address: student.address, mentor: student.mentor });
+    setFormData({ nis: student.nis, name: student.name, year: student.year, gender: student.gender, address: student.address, parent: student.parent });
     setIsModalOpen(true);
   };
 
@@ -72,7 +72,7 @@ export default function MentorStudentsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Data Siswa</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Kelola data siswa yang dipantau mentor.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Kelola data siswa yang dipantau parent.</p>
         </div>
 
         {/* Filter, Search, Action */}
@@ -113,7 +113,7 @@ export default function MentorStudentsPage() {
                 <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Year</th>
                 <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Gender</th>
                 <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Address</th>
-                <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Mentor</th>
+                <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">parent</th>
                 <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400 text-center">Aksi</th>
               </tr>
             </thead>
@@ -129,7 +129,7 @@ export default function MentorStudentsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.gender}</td>
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.address}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.mentor}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.parent}</td>
                   <td className="px-6 py-4 text-center">
                     <div className="flex gap-2 justify-center">
                       <button 
@@ -278,14 +278,14 @@ export default function MentorStudentsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Mentor</label>
+                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">parent</label>
                     <input 
                       required
                       type="text" 
                       className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors dark:text-white"
-                      placeholder="Masukkan nama mentor..."
-                      value={formData.mentor}
-                      onChange={(e) => setFormData({...formData, mentor: e.target.value})}
+                      placeholder="Masukkan nama parent..."
+                      value={formData.parent}
+                      onChange={(e) => setFormData({...formData, parent: e.target.value})}
                     />
                   </div>
                 </div>
