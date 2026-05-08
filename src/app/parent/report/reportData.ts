@@ -246,4 +246,36 @@ export const REPORTS: TermReport[] = [
       },
     ],
   },
+  {
+    term: "Term 2",
+    academicYear: "2025/2026",
+    status: "Aktif",
+    class: "Year 2",
+    studentName: "Emmy Kurniawan Lukminto",
+    domain: "AESTHETICS DOMAIN",
+    mentor: "Pak Hartono",
+    teacherNote: "Semangat belajar yang tinggi di awal kelas baru.",
+    subjects: [
+      {
+        name: "SCIENCE",
+        teacher: "Ms Sarah",
+        criteria: [
+          { description: "Understanding basic science concepts", score: "2.80" },
+          { description: "Conducting simple experiments", score: "2.70" },
+        ],
+        average: "2.75",
+        level: "Exceeding",
+      },
+      {
+        name: "BAHASA INDONESIA",
+        teacher: "Bu Sari",
+        criteria: [
+          { description: "Membaca dengan pemahaman baik", score: "2.90" },
+          { description: "Menulis narasi sederhana", score: "2.85" },
+        ],
+        average: "2.88",
+        level: "Exceeding",
+      },
+    ],
+  },
 ];
