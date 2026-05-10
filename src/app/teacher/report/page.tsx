@@ -41,14 +41,17 @@ export default function TeacherReportPage() {
   const [scoreForm, setScoreForm] = useState<any>(null);
   const [inputScores, setInputScores] = useState<any[]>([]);
 
-  // 1. Fetch Profile & Subjects on Mount
+  // 1. Fetch Profile & Subjects on Mount secara PARALEL (Lebih Cepat!)
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const profileRes = await api.get('/teacher/profile');
-        setProfile(profileRes.data.data);
+        // Fetch dua API secara bersamaan, bukan satu per satu
+        const [profileRes, subjectRes] = await Promise.all([
+          api.get('/teacher/profile'),
+          api.get('/teacher/subjects')
+        ]);
 
-        const subjectRes = await api.get('/teacher/subjects');
+        setProfile(profileRes.data.data);
         setSubjects(subjectRes.data.data);
         
         if (subjectRes.data.data.length > 0) {
@@ -109,9 +112,15 @@ export default function TeacherReportPage() {
   // 5. Submit Form
   const handleSave = async () => {
     try {
+      // Format ulang data sebelum dikirim: ubah tanda koma (,) menjadi titik (.) agar lolos validasi 'numeric' Laravel
+      const formattedScores = inputScores.map(item => ({
+        ...item,
+        score: String(item.score).replace(',', '.')
+      }));
+
       const payload = {
         academic_year: "2023/2024", // Menggunakan slash (/) sesuai database
-        scores: inputScores
+        scores: formattedScores
       };
       await api.post(`/teacher/subjects/${selectedSubjectId}/students/${selectedStudentId}/scores`, payload);
       

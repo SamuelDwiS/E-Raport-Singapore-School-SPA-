@@ -18,7 +18,12 @@ export default function AuthPage() {
     setLoading(true);
 
    try {
-      
+      // 1. Ambil CSRF Cookie dari Laravel terlebih dahulu
+      await api.get('/sanctum/csrf-cookie', {
+        baseURL: process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:8000'
+      });
+
+      // 2. Lakukan proses login (Cookie akan tertanam otomatis jika sukses)
       const response = await api.post('/login', {
         email: email,
         password: password
@@ -27,11 +32,12 @@ export default function AuthPage() {
       const data = response.data; 
       if (data.success) {
 
-
-        localStorage.setItem('token', data.access_token);
+        // HANYA simpan profil user untuk keperluan render UI (bukan untuk auth)
+        // localStorage.setItem('token', ...); <-- DIHAPUS KARENA SUDAH PAKAI COOKIE
         localStorage.setItem('user', JSON.stringify(data.user));
 
-
+        // PENTING: Simpan role di cookie agar Middleware bisa baca
+        document.cookie = `role=${data.user.role}; path=/; max-age=86400`;
         const role = data.user.role;
         if (role === 'mentor') {
           router.push('/mentor');
@@ -54,6 +60,7 @@ export default function AuthPage() {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 to-brand-100 p-4">
