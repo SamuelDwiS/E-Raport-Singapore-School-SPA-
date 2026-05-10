@@ -16,8 +16,7 @@ const api = axios.create({
 // Interceptor Auto Response if unauthorized (401)
 api.interceptors.response.use(
     (response) => response,
-    (error)   =>
-    {
+    (error)   => {
         if(error.response && error.response.status == 401)
         {
             if(typeof window !== 'undefined')

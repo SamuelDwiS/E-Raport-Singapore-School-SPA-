@@ -143,7 +143,7 @@ export default function TeacherReportPage() {
   // Helpers to safely get current selection details
   const currentSubject = subjects.find(s => s.subject_id === selectedSubjectId) || {};
   const currentStudent = students.find(s => s.student_id === selectedStudentId) || {};
-
+  
   // Calculate Average from current inputScores dynamically in Form View
   const currentFormAverage = useMemo(() => {
     if (!inputScores || inputScores.length === 0) return "—";
