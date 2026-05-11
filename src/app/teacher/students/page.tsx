@@ -34,7 +34,20 @@ export default function TeacherStudentsPage() {
     queryKey: ['teacher-subjects'],
     queryFn: async () => {
       const response = await api.get('/teacher/subjects');
-      return response.data.data as Subject[];
+      const data = response.data.data as Subject[];
+
+      // Ambil params dari URL jika ada
+      const params = new URLSearchParams(window.location.search);
+      const subjectIdParam = params.get('subject');
+      
+      if (subjectIdParam && data.length > 0) {
+        const found = data.find(s => s.subject_id === parseInt(subjectIdParam));
+        if (found) {
+          setSelectedSubjectKey(`${found.category_subject}|${found.level_class}`);
+          setSelectedTerm(found.term);
+        }
+      }
+      return data;
     }
   });
 

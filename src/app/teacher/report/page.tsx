@@ -54,10 +54,15 @@ export default function TeacherReportPage() {
     queryKey: ['score-form', subjectId, studentId],
     queryFn: async () => {
       const res = await api.get(`/teacher/subjects/${subjectId}/students/${studentId}/scores`);
-      const data = res.data.data;
-      
+      return res.data.data;
+    },
+    enabled: !!studentId && !!subjectId
+  });
+
+  useEffect(() => {
+    if (scoreForm) {
       const initialFormState: any[] = [];
-      data.rubrics.forEach((r: any) => {
+      scoreForm.rubrics.forEach((r: any) => {
         r.criteria.forEach((c: any) => {
           initialFormState.push({
             criteria_id: c.criteria_id,
@@ -67,10 +72,8 @@ export default function TeacherReportPage() {
         });
       });
       setInputScores(initialFormState);
-      return data;
-    },
-    enabled: !!studentId && !!subjectId
-  });
+    }
+  }, [scoreForm]);
 
   const scoreMutation = useMutation({
     mutationFn: async (payload: any) => {
@@ -81,7 +84,7 @@ export default function TeacherReportPage() {
       queryClient.invalidateQueries({ queryKey: ['teacher-students'] });
       setTimeout(() => { 
         setSaved(false); 
-        router.replace('/teacher/students');
+        router.replace(`/teacher/students?subject=${subjectId}`);
       }, 2000);
     },
     onError: (err: any) => {
@@ -124,6 +127,19 @@ export default function TeacherReportPage() {
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100 transition-colors relative">
       
+      {/* Read-Only Notice Banner */}
+      {scoreForm?.is_read_only_mode && (
+        <div className="bg-amber-50 dark:bg-amber-900/30 border-l-8 border-amber-500 p-6 rounded-2xl shadow-sm animate-in slide-in-from-top duration-500">
+          <div className="flex items-center gap-4">
+            <span className="text-3xl">ℹ️</span>
+            <div>
+              <p className="text-amber-900 dark:text-amber-200 font-black uppercase text-xs tracking-widest mb-1">Mode Lihat Saja (Read-Only)</p>
+              <p className="text-amber-800 dark:text-amber-300 text-sm font-medium">{scoreForm.read_only_reason}</p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Dynamic Toast Notification */}
       {showToast && (
         <div className="fixed top-24 right-4 z-[100] animate-in slide-in-from-right duration-300">
@@ -145,7 +161,7 @@ export default function TeacherReportPage() {
         </div>
         <div className="flex gap-4">
           <button 
-            onClick={() => router.replace('/teacher/students')} 
+            onClick={() => router.replace(`/teacher/students?subject=${subjectId}`)} 
             className="text-sm font-bold bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-xl hover:bg-gray-50 transition"
           >
             ← Kembali ke Daftar
@@ -178,37 +194,49 @@ export default function TeacherReportPage() {
             <div className="p-0">
                 {scoreForm.rubrics.map((rubric: any) => (
                     <div key={rubric.rubric_id} className="border-b border-gray-100 dark:border-gray-700 last:border-0">
-                        <div className="bg-gray-50/50 dark:bg-gray-900/30 px-8 py-4 flex items-center gap-3">
-                            <div className="w-2 h-6 bg-indigo-500 rounded-full"></div>
-                            <h3 className="font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-widest text-xs">{rubric.rubric_name}</h3>
+                        <div className="bg-gray-50/50 dark:bg-gray-900/30 px-8 py-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
+                            <div className="flex items-center gap-3">
+                                <div className="w-2 h-6 bg-indigo-500 rounded-full"></div>
+                                <h3 className="font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-widest text-xs">{rubric.rubric_name}</h3>
+                            </div>
+                            {rubric.is_mine ? (
+                                <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full border border-indigo-100 dark:border-indigo-800">Milik Saya</span>
+                            ) : (
+                                <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest bg-amber-50 dark:bg-amber-900/30 px-3 py-1 rounded-full border border-amber-100 dark:border-amber-800">Penilaian Rekan</span>
+                            )}
                         </div>
 
                         <div className="divide-y divide-gray-50 dark:divide-gray-800">
                             {rubric.criteria.map((c: any) => {
                                 const currentInput = inputScores.find(i => i.criteria_id === c.criteria_id);
                                 return (
-                                    <div key={c.criteria_id} className="px-8 py-6 flex flex-col md:flex-row gap-6 hover:bg-gray-50/30 dark:hover:bg-indigo-900/10 transition-all group">
+                                    <div key={c.criteria_id} className={`px-8 py-6 flex flex-col md:flex-row gap-6 transition-all group ${!c.is_mine ? 'bg-gray-50/50 dark:bg-gray-900/20' : 'hover:bg-gray-50/30 dark:hover:bg-indigo-900/10'}`}>
                                         <div className="flex-1 space-y-3">
-                                            <p className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 transition-colors">
-                                                {c.criteria_name}
-                                            </p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-sm font-bold text-gray-800 dark:text-gray-200">
+                                                    {c.criteria_name}
+                                                </p>
+                                                {!c.is_mine && <span className="text-[9px] font-black text-gray-400 border border-gray-200 dark:border-gray-700 px-1.5 py-0.5 rounded italic">Read Only</span>}
+                                            </div>
                                             <textarea 
+                                                disabled={!c.is_mine}
                                                 value={currentInput?.description_subject || ""}
                                                 onChange={(e) => handleScoreChange(c.criteria_id, 'description_subject', e.target.value)}
-                                                placeholder="Komentar untuk kriteria ini..."
-                                                className="w-full text-xs font-medium text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none"
+                                                placeholder={c.is_mine ? "Komentar untuk kriteria ini..." : "Belum ada komentar dari rekan."}
+                                                className={`w-full text-xs font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none ${!c.is_mine ? 'opacity-50 cursor-not-allowed italic text-gray-400' : 'text-gray-600 dark:text-gray-400'}`}
                                                 rows={2}
                                             />
                                         </div>
                                         <div className="flex flex-col items-center justify-center min-w-[120px] gap-2">
                                             <label className="text-[10px] font-black text-gray-400 uppercase">Skor (1-3)</label>
                                             <input 
+                                                disabled={!c.is_mine}
                                                 type="number"
                                                 step="0.01" min="1" max="3"
                                                 value={currentInput?.score || ""}
                                                 onChange={(e) => handleScoreChange(c.criteria_id, 'score', e.target.value)}
                                                 placeholder="0.00"
-                                                className={`w-24 text-center py-3 border-2 dark:border-gray-700 rounded-2xl text-lg font-black outline-none transition-all ${scoreColor(currentInput?.score || "")}`}
+                                                className={`w-24 text-center py-3 border-2 dark:border-gray-700 rounded-2xl text-lg font-black outline-none transition-all ${!c.is_mine ? 'opacity-30 cursor-not-allowed bg-gray-100 dark:bg-gray-900 border-gray-200 text-gray-400' : scoreColor(currentInput?.score || "")}`}
                                             />
                                         </div>
                                     </div>
@@ -231,13 +259,15 @@ export default function TeacherReportPage() {
                   <p className="text-sm font-bold text-gray-700 dark:text-gray-300 italic">{getLevelLabel(currentFormAverage).label}</p>
                 </div>
               </div>
-              <button 
-                onClick={handleSave} 
-                disabled={scoreMutation.isPending}
-                className={`w-full md:w-auto px-12 py-4 rounded-2xl font-black text-sm tracking-widest transition-all shadow-xl dark:shadow-none active:scale-95 ${saved ? 'bg-emerald-500 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200'} ${scoreMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                {scoreMutation.isPending ? "MEMPROSES..." : (saved ? "✓ TERSIMPAN" : "KONFIRMASI & SIMPAN NILAI")}
-              </button>
+              {!scoreForm.is_read_only_mode && (
+                <button 
+                  onClick={handleSave} 
+                  disabled={scoreMutation.isPending}
+                  className={`w-full md:w-auto px-12 py-4 rounded-2xl font-black text-sm tracking-widest transition-all shadow-xl dark:shadow-none active:scale-95 ${saved ? 'bg-emerald-500 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200'} ${scoreMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {scoreMutation.isPending ? "MEMPROSES..." : (saved ? "✓ TERSIMPAN" : "KONFIRMASI & SIMPAN NILAI")}
+                </button>
+              )}
             </div>
           </div>
         </div>
