@@ -48,7 +48,7 @@ export const NAV_CONFIG: Record<UserRole, NavSection[]> = {
       items: [
         { name: "Dashboard",      icon: <GridIcon />,       path: "/teacher" },
         { name: "Siswa & Penilaian",     icon: <TableIcon />,      path: "/teacher/students" },
-        { name: "Perancangan Penilaian",     icon: <ListIcon />,      path: "/teacher/rubrics" },
+        { name: "Susun Penilaian",     icon: <ListIcon />,      path: "/teacher/rubrics" },
       ],
     },
   ],
