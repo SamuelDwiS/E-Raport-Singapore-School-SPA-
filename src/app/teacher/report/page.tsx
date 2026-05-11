@@ -30,7 +30,8 @@ export default function TeacherReportPage() {
   const queryClient = useQueryClient();
   
   const [saved, setSaved] = useState(false);
-  const [inputScores, setInputScores] = useState<any[]>([]); // Flat array for all criteria
+  const [showToast, setShowToast] = useState<{msg: string, type: 'success' | 'warn' | 'error'} | null>(null);
+  const [inputScores, setInputScores] = useState<any[]>([]);
 
   const studentId = searchParams.get('student');
   const subjectId = searchParams.get('subject');
@@ -55,7 +56,6 @@ export default function TeacherReportPage() {
       const res = await api.get(`/teacher/subjects/${subjectId}/students/${studentId}/scores`);
       const data = res.data.data;
       
-      // Initialize flat input state from nested rubrics
       const initialFormState: any[] = [];
       data.rubrics.forEach((r: any) => {
         r.criteria.forEach((c: any) => {
@@ -67,7 +67,6 @@ export default function TeacherReportPage() {
         });
       });
       setInputScores(initialFormState);
-      
       return data;
     },
     enabled: !!studentId && !!subjectId
@@ -82,12 +81,11 @@ export default function TeacherReportPage() {
       queryClient.invalidateQueries({ queryKey: ['teacher-students'] });
       setTimeout(() => { 
         setSaved(false); 
-        router.push('/teacher/students');
-      }, 1500);
+        router.replace('/teacher/students');
+      }, 2000);
     },
-    onError: (err) => {
-      console.error("Gagal simpan nilai", err);
-      alert('Gagal menyimpan nilai. Pastikan input angka yang valid (1.00 - 3.00)');
+    onError: (err: any) => {
+      setShowToast({ msg: "Gagal menyimpan. Cek kembali format angka (1.00 - 3.00)", type: 'error' });
     }
   });
 
@@ -98,10 +96,20 @@ export default function TeacherReportPage() {
   };
 
   const handleSave = () => {
+    // Cek apakah ada yang kosong
+    const emptyFields = inputScores.filter(i => !i.score || i.score === '');
+    
+    if (emptyFields.length > 0) {
+      setShowToast({ msg: `Ada ${emptyFields.length} kriteria belum terisi. Status akan menjadi DRAFT.`, type: 'warn' });
+    } else {
+      setShowToast({ msg: "Semua terisi! Status akan menjadi SELESAI.", type: 'success' });
+    }
+
     const payload = {
       academic_year: "2024/2025",
-      scores: inputScores.map(i => ({ ...i, score: String(i.score).replace(',', '.') }))
+      scores: inputScores.map(i => ({ ...i, score: i.score ? String(i.score).replace(',', '.') : null }))
     };
+    
     scoreMutation.mutate(payload);
   };
 
@@ -111,20 +119,34 @@ export default function TeacherReportPage() {
     return (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2);
   }, [inputScores]);
 
-  if (isLoading || !studentId) return <div className="p-20 text-center text-indigo-600 font-bold animate-pulse">Menyiapkan Lembar Penilaian Sub-Kriteria...</div>;
+  if (isLoading || !studentId) return <div className="p-20 text-center text-indigo-600 font-bold animate-pulse italic">Menyiapkan Lembar Penilaian...</div>;
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100 transition-colors">
+    <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100 transition-colors relative">
       
+      {/* Dynamic Toast Notification */}
+      {showToast && (
+        <div className="fixed top-24 right-4 z-[100] animate-in slide-in-from-right duration-300">
+           <div className={`px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border-l-8 ${
+             showToast.type === 'success' ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 
+             showToast.type === 'warn' ? 'bg-amber-50 border-amber-500 text-amber-800' : 'bg-rose-50 border-rose-500 text-rose-800'
+           }`}>
+             <span className="text-xl">{showToast.type === 'success' ? '✅' : showToast.type === 'warn' ? '⚠️' : '❌'}</span>
+             <p className="text-sm font-black uppercase tracking-tight">{showToast.msg}</p>
+             <button onClick={() => setShowToast(null)} className="ml-4 opacity-50 hover:opacity-100">✕</button>
+           </div>
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
         <div>
-          <h1 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Input Nilai Per Kriteria</h1>
+          <h1 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Lembar Penilaian</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{profile?.name || "Teacher"}</p>
         </div>
         <div className="flex gap-4">
           <button 
             onClick={() => router.replace('/teacher/students')} 
-            className="text-sm font-bold bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm"
+            className="text-sm font-bold bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-xl hover:bg-gray-50 transition"
           >
             ← Kembali ke Daftar
           </button>
@@ -134,7 +156,6 @@ export default function TeacherReportPage() {
       {scoreForm && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-            {/* Header Data Murid */}
             <div className="p-6 md:p-8 bg-indigo-900 dark:bg-indigo-950 text-white">
               <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                 <div className="flex items-center gap-4">
@@ -147,37 +168,34 @@ export default function TeacherReportPage() {
                         <p className="text-indigo-200 dark:text-indigo-300 text-sm mt-1 font-medium italic">"{scoreForm.subject.category_subject}"</p>
                     </div>
                 </div>
-                <div className="md:text-right hidden md:block">
-                    <p className="text-indigo-300 text-[10px] font-bold uppercase mb-1">Rata-rata Saat Ini</p>
+                <div className="md:text-right">
+                    <p className="text-indigo-300 text-[10px] font-bold uppercase mb-1 tracking-widest">Rata-rata Sementara</p>
                     <p className="text-4xl font-black">{currentFormAverage}</p>
                 </div>
               </div>
             </div>
 
-            {/* List Penilaian (Nested) */}
             <div className="p-0">
                 {scoreForm.rubrics.map((rubric: any) => (
                     <div key={rubric.rubric_id} className="border-b border-gray-100 dark:border-gray-700 last:border-0">
-                        {/* Judul Kategori (Parent) */}
                         <div className="bg-gray-50/50 dark:bg-gray-900/30 px-8 py-4 flex items-center gap-3">
                             <div className="w-2 h-6 bg-indigo-500 rounded-full"></div>
                             <h3 className="font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-widest text-xs">{rubric.rubric_name}</h3>
                         </div>
 
-                        {/* Baris Kriteria (Children) */}
                         <div className="divide-y divide-gray-50 dark:divide-gray-800">
                             {rubric.criteria.map((c: any) => {
                                 const currentInput = inputScores.find(i => i.criteria_id === c.criteria_id);
                                 return (
                                     <div key={c.criteria_id} className="px-8 py-6 flex flex-col md:flex-row gap-6 hover:bg-gray-50/30 dark:hover:bg-indigo-900/10 transition-all group">
                                         <div className="flex-1 space-y-3">
-                                            <p className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                            <p className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 transition-colors">
                                                 {c.criteria_name}
                                             </p>
                                             <textarea 
                                                 value={currentInput?.description_subject || ""}
                                                 onChange={(e) => handleScoreChange(c.criteria_id, 'description_subject', e.target.value)}
-                                                placeholder="Berikan catatan spesifik untuk indikator ini..."
+                                                placeholder="Komentar untuk kriteria ini..."
                                                 className="w-full text-xs font-medium text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none"
                                                 rows={2}
                                             />
@@ -201,25 +219,24 @@ export default function TeacherReportPage() {
                 ))}
             </div>
 
-            {/* Footer Summary & Save */}
             <div className="p-8 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center gap-6">
               <div className="flex items-center gap-6">
                 <div className="text-center md:text-left">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Final Grade</p>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Grade</p>
                   <p className={`text-3xl font-black ${getLevelLabel(currentFormAverage).color}`}>{currentFormAverage}</p>
                 </div>
                 <div className="h-10 w-[1px] bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
                 <div className="hidden md:block">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Predikat</p>
-                  <p className="text-sm font-bold text-gray-700 dark:text-gray-300">{getLevelLabel(currentFormAverage).label}</p>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Keterangan</p>
+                  <p className="text-sm font-bold text-gray-700 dark:text-gray-300 italic">{getLevelLabel(currentFormAverage).label}</p>
                 </div>
               </div>
               <button 
                 onClick={handleSave} 
                 disabled={scoreMutation.isPending}
-                className={`w-full md:w-auto px-12 py-4 rounded-2xl font-black text-sm tracking-widest transition-all shadow-xl active:scale-95 ${saved ? 'bg-emerald-500 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200 dark:shadow-none'} ${scoreMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`w-full md:w-auto px-12 py-4 rounded-2xl font-black text-sm tracking-widest transition-all shadow-xl dark:shadow-none active:scale-95 ${saved ? 'bg-emerald-500 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200'} ${scoreMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                {scoreMutation.isPending ? "MEMPROSES..." : (saved ? "✓ NILAI TERSIMPAN" : "KONFIRMASI & SIMPAN NILAI")}
+                {scoreMutation.isPending ? "MEMPROSES..." : (saved ? "✓ TERSIMPAN" : "KONFIRMASI & SIMPAN NILAI")}
               </button>
             </div>
           </div>

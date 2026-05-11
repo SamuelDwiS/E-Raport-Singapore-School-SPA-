@@ -17,7 +17,8 @@ type Student = {
   level_class: string;
   gender: string;
   address: string;
-  has_score: boolean;
+  status_score: 'completed' | 'draft' | 'none';
+  completion: number;
   average_value: number | null;
 };
 
@@ -191,15 +192,34 @@ export default function TeacherStudentsPage() {
                   <td className="px-8 py-5 text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{student.name_student}</td>
                   <td className="px-8 py-5 text-sm text-gray-600 dark:text-gray-400">{student.gender}</td>
                   <td className="px-8 py-5 text-center">
-                    {student.has_score ? (
-                      <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
-                        Selesai
+                    <div className="flex flex-col items-center gap-2">
+                      {student.status_score === 'completed' ? (
+                        <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
+                          Selesai
+                        </span>
+                      ) : student.status_score === 'draft' ? (
+                        <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50">
+                          Draft
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 border border-gray-200 dark:border-gray-700">
+                          Belum Nilai
+                        </span>
+                      )}
+                      
+                      {/* Progress Bar Mini */}
+                      {student.status_score !== 'none' && (
+                        <div className="w-20 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden border border-gray-50 dark:border-gray-800">
+                           <div 
+                             className={`h-full transition-all duration-500 ${student.status_score === 'completed' ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                             style={{ width: `${student.completion}%` }}
+                           ></div>
+                        </div>
+                      )}
+                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">
+                        {student.status_score === 'none' ? '0% Terisi' : `${student.completion}% Terisi`}
                       </span>
-                    ) : (
-                      <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50">
-                        Draft
-                      </span>
-                    )}
+                    </div>
                   </td>
                   <td className="px-8 py-5 text-center font-black text-indigo-600 dark:text-indigo-400">
                     {student.average_value !== null ? student.average_value : '—'}
@@ -207,9 +227,13 @@ export default function TeacherStudentsPage() {
                   <td className="px-8 py-5 text-right">
                     <button 
                       onClick={() => window.location.href = `/teacher/report?student=${student.student_id}&subject=${activeSubjectId}`}
-                      className="bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-600 hover:text-white transition-all border border-indigo-200 dark:border-gray-700 shadow-sm active:scale-95"
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border shadow-sm active:scale-95 ${
+                        student.status_score === 'none' 
+                        ? "bg-indigo-600 text-white border-indigo-500 hover:bg-indigo-700" 
+                        : "bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+                      }`}
                     >
-                      {student.has_score ? "Edit Raport" : "Input Nilai"}
+                      {student.status_score === 'none' ? "Input Nilai" : "Lanjutkan Nilai"}
                     </button>
                   </td>
                 </tr>
