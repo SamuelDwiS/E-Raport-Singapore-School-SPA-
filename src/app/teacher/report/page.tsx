@@ -45,7 +45,7 @@ export default function TeacherReportPage() {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        // Fetch dua API secara bersamaan, bukan satu per satu
+
         const [profileRes, subjectRes] = await Promise.all([
           api.get('/teacher/profile'),
           api.get('/teacher/subjects')

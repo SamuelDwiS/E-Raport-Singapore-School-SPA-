@@ -21,6 +21,8 @@ api.interceptors.response.use(
         {
             if(typeof window !== 'undefined')
             {
+                document.cookie = "role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                
                 // Redirect to auth page when session expires
                 window.location.href= '/auth';            
             }
