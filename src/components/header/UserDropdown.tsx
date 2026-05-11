@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import api from "@/lib/axios";
+import { useQuery } from "@tanstack/react-query";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,16 +15,25 @@ export default function UserDropdown() {
   const basePath = pathname.split('/')[1] || 'mentor';
   const profileUrl = `/${basePath}/profile`;
 
+  // Fetch Profil User secara Real-time
+  const { data: userData, isLoading } = useQuery({
+    queryKey: ['user-profile'],
+    queryFn: async () => {
+      const response = await api.get('/auth/check');
+      return response.data.user;
+    }
+  });
+
   async function handleLogout() {
     try {
       await api.post("/logout");
       // Force cookie removal if backend doesn't handle it well or for extra safety
       document.cookie = "role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      router.push("/auth");
+      // Invalidate cache
+      window.location.href = "/auth";
     } catch (error) {
       console.error("Logout failed:", error);
-      // Fallback redirect
-      router.push("/auth");
+      window.location.href = "/auth";
     }
   }
 
@@ -50,8 +60,10 @@ export default function UserDropdown() {
           />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Reza</span>
-
+        <span className="block mr-1 font-medium text-theme-sm">
+          {isLoading ? "..." : userData?.username || "Guest"}
+        </span>
+ 
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -79,10 +91,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Reza Pratama
+            {userData?.username || "Loading..."}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            rezapratama@gmail.com
+            {userData?.email || "..."}
           </span>
         </div>
 

@@ -47,11 +47,7 @@ export const NAV_CONFIG: Record<UserRole, NavSection[]> = {
       label: "Menu",
       items: [
         { name: "Dashboard",      icon: <GridIcon />,       path: "/teacher" },
-        {
-          name: "Input Nilai",
-          icon: <ListIcon />, path: "/teacher/report" 
-        },
-        { name: "Data Siswa",     icon: <TableIcon />,      path: "/teacher/students" },
+        { name: "Siswa & Penilaian",     icon: <TableIcon />,      path: "/teacher/students" },
       ],
     },
   ],

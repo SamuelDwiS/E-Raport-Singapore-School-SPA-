@@ -34,7 +34,19 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const isActive = useCallback(
-    (path: string) => pathname === path || pathname.startsWith(path + "/"),
+    (path: string) => {
+      // Special case: Jika sedang di report form, anggap menu students yang aktif
+      if (pathname.startsWith('/teacher/report') && path === '/teacher/students') {
+        return true;
+      }
+      
+      // Jika path adalah root dashboard (/teacher), gunakan exact match
+      if (path === '/teacher') {
+        return pathname === '/teacher';
+      }
+
+      return pathname === path || pathname.startsWith(path + "/");
+    },
     [pathname]
   );
 
