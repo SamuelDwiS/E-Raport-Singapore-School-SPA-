@@ -21,8 +21,4 @@ Proyek ini memanfaatkan cutting-edge stack untuk memastikan performa dan skalabi
 
 * Tailwind CSS: Memastikan tampilan dasbor yang modern, bersih, dan sepenuhnya responsif di berbagai perangkat.
 
-<<<<<<< HEAD
 * TypeScript: Meningkatkan keamanan kode dan mempermudah pemeliharaan jangka panjang melalui static typing.
-=======
-* TypeScript: Meningkatkan keamanan kode dan mempermudah pemeliharaan jangka panjang melalui static typing.
->>>>>>> 29c0fff5a474304b097f01d6f5b4f3e40b99d5b8

@@ -1,314 +1,164 @@
 "use client";
 import React, { useState } from 'react';
-
-const CLASSES = Array.from({ length: 12 }, (_, i) => `Year ${i + 1}`);
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import api from '@/lib/axios';
+import Link from 'next/link';
+import MentorEvaluationModal from './MentorEvaluationModal';
 
 type Student = {
-  id: number;
+  student_id: number;
   nis: string;
-  name: string;
-  year: string;
-  gender: string;
-  address: string;
-  parent: string;
+  name_student: string;
+  status_note: 'completed' | 'none';
+  mentor_note: string | null;
+};
+
+type MentorClass = {
+  level_class: string;
+  mentor_id: number;
 };
 
 export default function MentorStudentsPage() {
-  const [students, setStudents] = useState<Student[]>([
-    { id: 1, name: "Adrian Li Preman", nis: "2324001", year: "Year 2", gender: "Laki-laki", address: "Jl. Contoh No. 1", parent: "Pak Budi" },
-    { id: 2, name: "Budi Setiawan", nis: "2324002", year: "Year 2", gender: "Laki-laki", address: "Jl. Contoh No. 2", parent: "Pak Budi" },
-    { id: 3, name: "Citra Lestari", nis: "2324003", year: "Year 2", gender: "Perempuan", address: "Jl. Contoh No. 3", parent: "Pak Budi" },
-    { id: 4, name: "Deni Ramadhan", nis: "2324004", year: "Year 3", gender: "Laki-laki", address: "Jl. Contoh No. 4", parent: "Pak Budi" },
-  ]);
-
-  const [selectedYear, setSelectedYear] = useState("");
+  const [activeLevel, setActiveLevel] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [formData, setFormData] = useState({ nis: '', name: '', year: 'Year 1', gender: 'Laki-laki', address: '', parent: '' });
+  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
 
-  // Filtering
-  const filteredStudents = students.filter(student => {
-    const matchYear = selectedYear ? student.year === selectedYear : true;
-    const matchSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        student.nis.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchYear && matchSearch;
+  // 1. Fetch Daftar Kelas Mentor
+  const { data: mentorClasses = [] } = useQuery({
+    queryKey: ['mentor-classes'],
+    queryFn: async () => {
+      const res = await api.get('/mentor/classes');
+      const data = res.data.data;
+      if (data.length > 0 && !activeLevel) {
+        setActiveLevel(data[0].level_class);
+      }
+      return data as MentorClass[];
+    }
   });
 
-  // Handlers
-  const openAddModal = () => {
-    setEditingId(null);
-    setFormData({ nis: '', name: '', year: 'Year 1', gender: 'Laki-laki', address: '', parent: '' });
+  // 2. Fetch Daftar Siswa di Kelas Terpilih
+  const { data: studentData, isLoading } = useQuery({
+    queryKey: ['mentor-students', activeLevel],
+    queryFn: async () => {
+      const res = await api.get(`/mentor/students?level_class=${activeLevel}`);
+      return res.data.data;
+    },
+    enabled: !!activeLevel
+  });
+
+  const students = studentData?.students || [];
+
+  const openEvaluationModal = (studentId: number) => {
+    setSelectedStudentId(studentId);
     setIsModalOpen(true);
   };
 
-  const openEditModal = (student: Student) => {
-    setEditingId(student.id);
-    setFormData({ nis: student.nis, name: student.name, year: student.year, gender: student.gender, address: student.address, parent: student.parent });
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = (id: number) => {
-    if (window.confirm("Apakah anda yakin ingin menghapus data siswa ini?")) {
-      setStudents(students.filter(s => s.id !== id));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingId) {
-      setStudents(students.map(s => s.id === editingId ? { ...s, ...formData } : s));
-    } else {
-      const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
-      setStudents([...students, { id: newId, ...formData }]);
-    }
-    setIsModalOpen(false);
-  };
+  const filteredStudents = students.filter((s: Student) => 
+    s.name_student.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    s.nis.includes(searchTerm)
+  );
 
   return (
-    <div className="p-4 flex flex-col gap-6">
-      {/* Header Halaman */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Data Siswa</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Kelola data siswa yang dipantau parent.</p>
+    <div className="p-4 sm:p-6 flex flex-col gap-8 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
+      
+      {/* Header Premium */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-4">
+            <div className="bg-emerald-500/10 p-3 rounded-2xl">
+                <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 15.292m0-15.292a4 4 0 110 15.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            </div>
+            <div>
+                <h1 className="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Evaluasi Mentor</h1>
+                <p className="text-gray-500 dark:text-gray-400 text-sm font-medium italic">Pembimbingan Holistik (Affective Domain)</p>
+            </div>
         </div>
 
-        {/* Filter, Search, Action */}
-        <div className="flex flex-col md:flex-row w-full md:w-auto items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-center gap-3">
           <select 
-            className="w-full md:w-auto px-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
+            className="w-full sm:w-auto px-6 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all dark:text-white"
+            value={activeLevel}
+            onChange={(e) => setActiveLevel(e.target.value)}
           >
-            <option value="">Semua Year</option>
-            {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
+            {mentorClasses.map((c: MentorClass) => (
+              <option key={c.level_class} value={c.level_class}>{c.level_class}</option>
+            ))}
           </select>
-          <input 
-            type="text" 
-            placeholder="Cari NIS / Nama..." 
-            className="w-full md:w-auto px-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button 
-            onClick={openAddModal}
-            className="w-full md:w-auto bg-brand-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-brand-600 transition-all shadow-sm"
-          >
-            + Tambah Siswa
-          </button>
-        </div>
-      </div>
-
-      {/* Tabel Siswa */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden transition-colors">
-        {/* Desktop View: Table */}
-        <div className="hidden lg:block overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
-                <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">NIS</th>
-                <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Nama Siswa</th>
-                <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Year</th>
-                <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Gender</th>
-                <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">Address</th>
-                <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400">parent</th>
-                <th className="px-6 py-4 text-xs uppercase font-bold text-gray-500 dark:text-gray-400 text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
-              {filteredStudents.length > 0 ? filteredStudents.map((student) => (
-                <tr key={`desktop-${student.id}`} className="hover:bg-brand-50 dark:hover:bg-brand-900/20 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.nis}</td>
-                  <td className="px-6 py-4 text-sm font-bold text-gray-800 dark:text-gray-200">{student.name}</td>
-                  <td className="px-6 py-4">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400">
-                      {student.year}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.gender}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.address}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{student.parent}</td>
-                  <td className="px-6 py-4 text-center">
-                    <div className="flex gap-2 justify-center">
-                      <button 
-                        onClick={() => openEditModal(student)}
-                        className="bg-warning-100 dark:bg-warning-900/40 text-warning-700 dark:text-warning-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-warning-200 dark:hover:bg-warning-900/60 transition-all border border-warning-200 dark:border-warning-800"
-                      >
-                        ✏️ Edit
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(student.id)}
-                        className="bg-error-100 dark:bg-error-900/40 text-error-700 dark:text-error-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-error-200 dark:hover:bg-error-900/60 transition-all border border-error-200 dark:border-error-800"
-                      >
-                        🗑️ Hapus
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                    Tidak ada data siswa yang ditemukan.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile View: Cards */}
-        <div className="lg:hidden divide-y divide-gray-50 dark:divide-gray-700">
-          {filteredStudents.length > 0 ? filteredStudents.map((student) => (
-            <div key={`mobile-${student.id}`} className="p-5 space-y-4 hover:bg-brand-50 dark:hover:bg-brand-900/10 transition-colors">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-bold text-gray-800 dark:text-gray-200 leading-tight">{student.name}</h3>
-                  <p className="text-[10px] text-gray-500 dark:text-gray-400 font-mono mt-1">NIS: {student.nis} • {student.year}</p>
-                </div>
-                <span className="px-2 py-1 rounded-lg text-[9px] font-black uppercase bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400">
-                  {student.gender}
-                </span>
-              </div>
-              <div className="space-y-1">
-                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Address</p>
-                <p className="text-xs text-gray-600 dark:text-gray-300">{student.address}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <button 
-                  onClick={() => openEditModal(student)}
-                  className="bg-warning-500 text-white py-2.5 rounded-xl text-xs font-bold active:scale-[0.98] transition-all"
-                >
-                  ✏️ Edit
-                </button>
-                <button 
-                  onClick={() => handleDelete(student.id)}
-                  className="bg-error-500 text-white py-2.5 rounded-xl text-xs font-bold active:scale-[0.98] transition-all"
-                >
-                  🗑️ Hapus
-                </button>
-              </div>
-            </div>
-          )) : (
-            <div className="p-10 text-center text-gray-500 dark:text-gray-400">
-               Tidak ada data siswa yang ditemukan.
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Modal Form */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 dark:bg-gray-900/80 backdrop-blur-sm overflow-hidden">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-2xl border border-gray-100 dark:border-gray-700 flex flex-col max-h-full">
-            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center shrink-0">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                {editingId ? "Edit Data Siswa" : "Tambah Siswa Baru"}
-              </h3>
-              <button 
-                onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                title="Tutup"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="overflow-y-auto custom-scrollbar p-6">
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">NIS</label>
-                    <input 
-                      required
-                      type="text" 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors dark:text-white"
-                      placeholder="Masukkan NIS..."
-                      value={formData.nis}
-                      onChange={(e) => setFormData({...formData, nis: e.target.value})}
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nama Siswa</label>
-                    <input 
-                      required
-                      type="text" 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors dark:text-white"
-                      placeholder="Masukkan nama lengkap siswa..."
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Year / Kelas</label>
-                    <select 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors dark:text-white"
-                      value={formData.year}
-                      onChange={(e) => setFormData({...formData, year: e.target.value})}
-                    >
-                      {CLASSES.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Gender</label>
-                    <select 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors dark:text-white"
-                      value={formData.gender}
-                      onChange={(e) => setFormData({...formData, gender: e.target.value})}
-                    >
-                      <option value="Laki-laki">Laki-laki</option>
-                      <option value="Perempuan">Perempuan</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Address</label>
-                    <input 
-                      required
-                      type="text" 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors dark:text-white"
-                      placeholder="Masukkan alamat..."
-                      value={formData.address}
-                      onChange={(e) => setFormData({...formData, address: e.target.value})}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">parent</label>
-                    <input 
-                      required
-                      type="text" 
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors dark:text-white"
-                      placeholder="Masukkan nama parent..."
-                      value={formData.parent}
-                      onChange={(e) => setFormData({...formData, parent: e.target.value})}
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-2 flex gap-3 justify-end pt-4 border-t border-gray-100 dark:border-gray-700">
-                  <button 
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-transparent transition-colors"
-                  >
-                    Batal
-                  </button>
-                  <button 
-                    type="submit"
-                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-brand-500 hover:bg-brand-600 shadow-sm transition-colors"
-                  >
-                    {editingId ? "Simpan Perubahan" : "Tambahkan"}
-                  </button>
-                </div>
-              </form>
-            </div>
+          <div className="relative w-full sm:w-64">
+            <input 
+                type="text" 
+                placeholder="Cari Siswa..." 
+                className="w-full px-5 py-3 pl-12 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all dark:text-white font-medium"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <svg className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           </div>
         </div>
+      </div>
+
+      {/* Daftar Siswa Grid */}
+      {isLoading ? (
+        <div className="flex items-center justify-center p-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-emerald-500"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredStudents.map((student: Student) => (
+            <div 
+                key={student.student_id} 
+                className="group bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-emerald-500/30 transition-all duration-300 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-3">
+                <span className={`px-3 py-1 rounded-bl-2xl text-[10px] font-black uppercase tracking-widest ${student.status_note === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400'}`}>
+                    {student.status_note === 'completed' ? 'Terisi' : 'Kosong'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-14 w-14 rounded-2xl bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-2xl font-black text-gray-400">
+                    {student.name_student.charAt(0)}
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 dark:text-white leading-tight group-hover:text-emerald-600 transition-colors">{student.name_student}</h3>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">NIS: {student.nis}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-2xl min-h-[80px] border border-transparent group-hover:border-emerald-500/10 transition-all">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium italic line-clamp-3 leading-relaxed">
+                    {student.mentor_note || "Belum ada deskripsi evaluasi..."}
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => openEvaluationModal(student.student_id)}
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-wider shadow-lg shadow-emerald-500/10 hover:scale-[1.02] active:scale-95 transition-all"
+                  >
+                    Edit Evaluasi
+                  </button>
+                  <Link 
+                    href={`/mentor/students/${student.student_id}/report`}
+                    className="flex-1 bg-gray-900 dark:bg-gray-700 hover:bg-gray-800 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-wider shadow-lg shadow-gray-200 dark:shadow-none hover:scale-[1.02] active:scale-95 transition-all text-center flex items-center justify-center"
+                  >
+                    Lihat Raport
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Modal Evaluasi Mentor */}
+      {isModalOpen && selectedStudentId && (
+        <MentorEvaluationModal 
+          studentId={selectedStudentId} 
+          levelClass={activeLevel} 
+          onClose={() => setIsModalOpen(false)} 
+        />
       )}
     </div>
   );
