@@ -445,7 +445,7 @@ function MentorReportContent() {
 
                                      <div className="flex items-center justify-between pt-2">
                                         <div className="flex items-center gap-2">
-                                           {statusMessage?.id === detail.id && (
+                                           {statusMessage?.id === detail.id && statusMessage != null && (
                                              <span className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest animate-in fade-in slide-in-from-left-2 ${statusMessage.type === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>
                                                {statusMessage.type === 'success' ? <CheckCircle className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
                                                {statusMessage.text}
