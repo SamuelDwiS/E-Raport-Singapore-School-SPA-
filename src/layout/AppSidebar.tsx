@@ -192,7 +192,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
     >
       {/* ── Logo ─────────────────────────────────────────────────────────── */}
       <div
-        className={`py-8 flex ${
+        className={`py-6 flex ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
@@ -203,24 +203,31 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ role }) => {
                 className="dark:hidden"
                 src="/images/logo/logo_new.svg"
                 alt="Logo"
-                width={150}
-                height={150}
+                width={220}
+                height={60}
+                style={{ width: "auto", height: "auto" }}
+                priority
               />
               <Image
                 className="hidden dark:block"
                 src="/images/logo/logo_dark.svg"
                 alt="Logo"
-                width={150}
-                height={150}
+                width={220}
+                height={60}
+                style={{ width: "auto", height: "auto" }}
+                priority
               />
             </>
           ) : (
-            <Image
-              src="/images/logo/icon.svg"
-              alt="Logo"
-              width={50}
-              height={50}
-            />
+            <div className="flex items-center justify-center bg-brand-500/10 rounded-xl p-2">
+              <Image
+                src="/images/logo/icon.svg"
+                alt="Logo"
+                width={32}
+                height={32}
+                priority
+              />
+            </div>
           )}
         </Link>
       </div>
