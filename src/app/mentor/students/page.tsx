@@ -99,8 +99,25 @@ export default function MentorStudentsPage() {
 
       {/* Daftar Siswa Grid */}
       {isLoading ? (
-        <div className="flex items-center justify-center p-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-emerald-500"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 animate-pulse">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-14 w-14 rounded-2xl bg-gray-100 dark:bg-gray-700"></div>
+                <div className="space-y-2">
+                  <div className="h-4 w-32 bg-gray-100 dark:bg-gray-700 rounded-lg"></div>
+                  <div className="h-3 w-20 bg-gray-100 dark:bg-gray-700 rounded-lg"></div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="h-24 bg-gray-100 dark:bg-gray-700 rounded-2xl"></div>
+                <div className="flex gap-2">
+                  <div className="h-12 flex-1 bg-gray-100 dark:bg-gray-700 rounded-2xl"></div>
+                  <div className="h-12 flex-1 bg-gray-100 dark:bg-gray-700 rounded-2xl"></div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

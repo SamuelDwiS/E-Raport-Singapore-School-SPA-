@@ -287,7 +287,16 @@ function MentorReportContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {isStudentsLoading ? (
                Array.from({length: 6}).map((_, i) => (
-                <div key={i} className="h-48 bg-gray-200 dark:bg-gray-800 animate-pulse rounded-[2.5rem]"></div>
+                <div key={i} className="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 animate-pulse">
+                  <div className="flex items-center gap-5 mb-8">
+                    <div className="h-16 w-16 rounded-2xl bg-gray-100 dark:bg-gray-700"></div>
+                    <div className="space-y-2">
+                      <div className="h-4 w-32 bg-gray-100 dark:bg-gray-700 rounded-lg"></div>
+                      <div className="h-3 w-20 bg-gray-100 dark:bg-gray-700 rounded-lg"></div>
+                    </div>
+                  </div>
+                  <div className="h-12 w-full bg-gray-100 dark:bg-gray-700 rounded-2xl"></div>
+                </div>
                ))
             ) : filteredStudents.map((student) => (
               <div 
@@ -331,7 +340,28 @@ function MentorReportContent() {
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                   {isReportsLoading ? (
-                    <tr><td colSpan={4} className="p-20 text-center animate-pulse font-bold text-gray-400 italic">Memuat Laporan...</td></tr>
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <tr key={i} className="animate-pulse">
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-4">
+                            <div className="h-11 w-11 bg-gray-100 dark:bg-gray-800 rounded-xl"></div>
+                            <div className="space-y-2">
+                              <div className="h-4 w-32 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
+                              <div className="h-3 w-16 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="h-4 w-24 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
+                        </td>
+                        <td className="px-8 py-6 text-center">
+                          <div className="h-6 w-12 bg-gray-100 dark:bg-gray-800 rounded-lg mx-auto"></div>
+                        </td>
+                        <td className="px-8 py-6 text-center">
+                          <div className="h-10 w-28 bg-gray-100 dark:bg-gray-800 rounded-xl mx-auto"></div>
+                        </td>
+                      </tr>
+                    ))
                   ) : filteredReports.length > 0 ? (
                     filteredReports.map((report) => (
                       <tr key={report.report_id} className="hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10 transition-colors group">
