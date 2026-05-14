@@ -25,7 +25,16 @@ const ParentDashboard = () => {
     }
   }, [children, selectedChildId]);
 
-  // 2. Fetch ringkasan raport untuk anak yang dipilih
+  // 2. Fetch Profil User (Orang Tua)
+  const { data: userData } = useQuery({
+    queryKey: ['user-profile'],
+    queryFn: async () => {
+      const response = await api.get('/auth/check');
+      return response.data.user;
+    }
+  });
+
+  // 3. Fetch ringkasan raport untuk anak yang dipilih
   const { data: reports, isLoading: loadingReports } = useQuery({
     queryKey: ['student-reports', selectedChildId],
     queryFn: async () => {
@@ -37,6 +46,7 @@ const ParentDashboard = () => {
   });
 
   const selectedChild = children?.find((c: any) => c.student_id === selectedChildId);
+  const parentName = userData?.display_name || userData?.username || 'Wali Murid';
 
   if (loadingChildren) return <div className="p-6">Loading children data...</div>;
 
@@ -72,10 +82,10 @@ const ParentDashboard = () => {
           {/* Welcome Card */}
           <div className="bg-gradient-to-r from-brand-600 to-brand-400 rounded-2xl p-6 shadow-lg text-white">
             <h2 className="text-xl font-semibold text-white">
-              Selamat Datang, Wali Murid dari {selectedChild?.name_student || '...'}!
+              Halo, {parentName}! 👋
             </h2>
             <p className="opacity-90 mt-1">
-              Berikut adalah ringkasan capaian {selectedChild?.name_student} di {selectedChild?.level_class}.
+              Selamat datang di dashboard Orang Tua. Pantau perkembangan {selectedChild?.name_student || 'anak Anda'} di sini.
             </p>
           </div>
 

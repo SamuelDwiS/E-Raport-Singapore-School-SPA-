@@ -32,3 +32,6 @@ Menciptakan antarmuka yang premium, bersih, dan intuitif. Navigasi harus terasa 
 ## 🔗 API Integration
 - Semua request menggunakan Axios instance (`@/lib/axios`).
 - Gunakan `invalidateQueries` setelah mutasi (simpan/hapus) untuk memastikan data di halaman lain tetap up-to-date.
+
+## Language
+- All response and communication must be in **English**.
